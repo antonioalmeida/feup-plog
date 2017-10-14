@@ -7,14 +7,14 @@ getPieceDisplay(1, 'K').
 getPieceDisplay(2, 'Q').
 getPieceDisplay(3, 'B').
 getPieceDisplay(4, 'H').
-getPieceDisplay(5, 'T').
+getPieceDisplay(5, 'R').
 
 %black pieces
 getPieceDisplay(6, 'k').
 getPieceDisplay(7, 'q').
 getPieceDisplay(8, 'b').
 getPieceDisplay(9, 'h').
-getPieceDisplay(10, 't').
+getPieceDisplay(10, 'r').
 
 displayBoard( Board ) :-
 	displayBoardHeader,
@@ -22,7 +22,7 @@ displayBoard( Board ) :-
 	displayBoardTail(Board, N),
 	displayBottom.
 
-displayBoardTail([], 9). %not sure why 9 works and 8 not
+displayBoardTail([], 9). %not sure why 9 works and 8 doesn't
 
 displayBoardTail( [ Line | T ], N ):-
 	write('|       |       |       |       |       |       |       |       |'), nl,

@@ -81,17 +81,17 @@ João Paulo Madureira Damas - 201504088 \\
 
 \textbf{Origens}\linebreak
 
-Xadrersi é um jogo de tabuleiro para duas pessoas criado por Andi Lewicki, em 2003. Como o nome sugere, surge de uma combinação entre os conhecidos jogos de tabuleiro Xadrez e Reversi.\linebreak
+Xadrersi é um jogo de tabuleiro para duas pessoas criado por Andi Lewicki, em 2003. Como o nome sugere, surge de uma combinação entre os conhecidos jogos de tabuleiro Xadrez e Reversi.\newline
 
-\textbf{Regras}\linebreak
+\textbf{Regras}\newline
 
 O jogo é disputado num tradicional tabuleiro 8x8, inicialmente vazio. A seu dispor, cada jogador possui as peças de que disporia se estivesse numa partida de Xadrez, exceto peões.
-Por outras palavras, cada jogador possui um rei, uma rainha, dois cavalos, dois bispos e duas torres.\linebreak
+Por outras palavras, cada jogador possui um rei, uma rainha, dois cavalos, dois bispos e duas torres.\newline
 
 Os jogadores vão colocando as suas peças no tabuleiro, uma a uma, alternadamente, até todas as peças estarem em jogo.
 Após colocada, uma peça não pode ser movida nem retirada (capturada).
 No entanto, ataca outras posições do tabuleiro segundo as regras de Xadrez (o rei ataca as posições adjacentes, o bispo diagonalmente, o cavalo em 'L', etc).
-Não se aplicam regras de cheque nem afastamento obrigatório entre reis, logo um rei pode ser colocado numa posição onde ficaria em cheque e os reis podem ficar em posições adjacentes. Os bispos devem ficar em posições de cores opostas, como no Xadrez.\linebreak
+Não se aplicam regras de cheque nem afastamento obrigatório entre reis, logo um rei pode ser colocado numa posição onde ficaria em cheque e os reis podem ficar em posições adjacentes. Os bispos devem ficar em posições de cores opostas, como no Xadrez.\newline
 
 De uma maneira geral, cada jogada é válida se e só se a peça colocada estiver a ser atacada por pelo menos uma peça adversária. A primeira exceção a esta regra é a primeira jogada, em que não há peças no tabuleiro. O jogador com as peças brancas começa e a primeira peça jogada é obrigatoriamente o rei, podendo ser colocado em qualquer posição.
 As figuras \ref{fig:fig1}, \ref{fig:fig2} e \ref{fig:fig3} ilustram uma sequência de jogadas válidas (com as hipóteses em cada turno destacadas) a partir da posição inicial.
@@ -132,7 +132,7 @@ Para além da obrigatoriedade do rei branco ser a primeira peça jogada, existem
     \item Quando um jogador coloca em jogo a sua rainha, o outro é obrigado, no turno seguinte, a colocar também a sua rainha em jogo
 \end{itemize}
 
-\textbf{Objetivo}\linebreak
+\textbf{Objetivo}\newline
 
 O objetivo é conseguir o maior número de pontos quando o jogo terminar, ou seja, quando todas as peças forem colocadas no tabuleiro.
 O número de pontos de um jogador corresponde ao número total de casas que as suas peças atacam.
@@ -173,10 +173,9 @@ De forma a sistematizar uma relação entre a representação interna das pecas 
 \end{center}
 
 \endminipage
-\end{small} \linebreak\linebreak
+\end{small} \newline\newline
 
-Por último, uma casa vazia é internalmente representada como 0 e visualizada na consola como um espaço vazio. \linebreak\linebreak
-
+Por último, uma casa vazia é internalmente representada como 0 e visualizada na consola como um espaço vazio. \newline
 
 \large Estado Inicial de Jogo
 \begin{center}
@@ -219,19 +218,20 @@ Em modo de texto, serão utilizados os predicados seguintes para produzir uma re
 
 \begin{lstlisting}[language=Prolog]
 getPieceDisplay(0, ' ').
+
 %white pieces
 getPieceDisplay(1, 'K').
 getPieceDisplay(2, 'Q'). 
 getPieceDisplay(3, 'B'). 
 getPieceDisplay(4, 'H'). 
-getPieceDisplay(5, 'T').
+getPieceDisplay(5, 'R').
 
 %black pieces
 getPieceDisplay(6, 'k'). 
 getPieceDisplay(7, 'q').
 getPieceDisplay(8, 'b'). 
 getPieceDisplay(9, 'h').
-getPieceDisplay(10, 't').
+getPieceDisplay(10, 'r').
 
 displayBoard( Board ) :-
 	displayBoardHeader,
@@ -239,6 +239,7 @@ displayBoard( Board ) :-
 	displayBottom.
 
 displayBoardTail([], 9).
+
 displayBoardTail( [ Line | T ], N ):-
 	write('|       |    (...)   |       |'), nl,
 	write('------ (...) -------'), nl,
@@ -268,7 +269,7 @@ displayBottom:-
 displayNumber(N) :- write(N), !.
 \end{lstlisting}
 
-Os exemplos apresentados na secção 2 são representados da seguinte forma:
+Os exemplos de estados de jogo apresentados na secção 2 são representados da seguinte forma:
 
 \begin{small}
 \begin{figure}[!htb]
@@ -291,7 +292,11 @@ Os exemplos apresentados na secção 2 são representados da seguinte forma:
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Movimentos}
 
-Elencar os movimentos (tipos de jogadas) possíveis e definir os cabeçalhos dos predicados que serão utilizados (ainda não precisam de estar implementados).
+Como o jogo não permite alterar a posição de uma peça após a sua colocação no tabuleiro, nem é permitido captura das mesmas, apenas existe um tipo de movimentação.\linebreak
 
+\Large Colocar uma peça no tabuleiro 
+\begin{lstlisting}[language=Prolog]
+setPiece( Piece, Row, Column, Board).
+\end{lstlisting}
 
 \end{document}
