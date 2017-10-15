@@ -18,18 +18,18 @@ getPieceDisplay(10, 'r').
 
 displayBoard( Board ) :-
 	displayBoardHeader,
-	N is 1,
+	N is 8,
 	displayBoardTail(Board, N),
 	displayBottom.
 
-displayBoardTail([], 9). %not sure why 9 works and 8 doesn't
+displayBoardTail([], 0). 
 
 displayBoardTail( [ Line | T ], N ):-
 	write('|       |       |       |       |       |       |       |       |'), nl,
 	write('-----------------------------------------------------------------'), nl,
 	write('|       |       |       |       |       |       |       |       |'), nl,
 	displayLine(Line, N), nl,
-	N1 is N+1,
+	N1 is N-1,
 	displayBoardTail(T, N1).
 
 displayLine([], N):- 
