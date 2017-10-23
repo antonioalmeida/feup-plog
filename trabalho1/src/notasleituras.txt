@@ -1,0 +1,22 @@
+le(Frase) :-
+	get_char( Ch ),
+	leTodosOsChars( Ch, ListaCarateres),
+	name( Frase, [ ch | ListaCarateres]).
+
+%terminadores de frase
+leTodosOsChars(10, []). 
+leTodosOsChars( 13, []).
+
+leTodosOsChars( Ch, [ Ch | MaisChars] ):-
+	get_char( NovoCh ),
+	leTodosOsChars( NovoCh, MaisChars).
+
+leInteiro( Prompt, Inteiro ):-
+	repeat,
+	write( Prompt ),
+	le( Inteiro ),
+	member( Inteiro ).
+
+repeat.
+repeat:- 
+	repeat.

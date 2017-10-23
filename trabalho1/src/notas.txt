@@ -1,0 +1,24 @@
+joga:-
+	estado(Jogador, TabInicial),
+	jogaJogo( Jogador, TabInicial, TabFinal),
+	mostraResultado(TabFinal).
+
+jogaJogo( Jogo, Tab, Tab):-
+	endGame(Jogador, Tab).
+
+jogaJogo( Jogador, Tab, TabFinal ):-
+	jogadasLegais( Jogador, Tab, ListaJogadas),
+	melhorJogada( Jogador, ListaJogadas, Melhor),
+	aplicaJogada( Tab, Melhor, NovoTab),
+	proximadaJogada( Jogador, Proximo),
+	jogaJogada(Proximo, NovoTab, TabFinal).
+
+joga:-
+	estado( Jogador, TabInicial),
+	assert ( estadoJogo( Jogador, TabInicial)),
+	repeat,
+		retract( estadoJogo( Jogador, Tab)),
+		???( JogaJogo(Jogador, Tab, NovoJogador, NovoTab ) ),
+		assert( estadoJogo( NovoJogador, NovoTab)),
+		endOfGame( NovoJogador, NovoTab ),
+	mostraResultado( NovoJogador, NovoTab).

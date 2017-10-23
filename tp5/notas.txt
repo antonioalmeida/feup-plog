@@ -1,0 +1,8 @@
+x: ola(x), ! , adeus(x)
+
+// Implementação do operador do not 
+not(X):- X, !, fail.
+not(X).
+
+Cut vermelho: influencia os resultados de opearações
+Cut verde: só está presente para motivos de performance

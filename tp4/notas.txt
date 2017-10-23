@@ -1,0 +1,61 @@
+findall(Var, Goal, List) - 
+	- var - o que queremos encontrar
+	- goal - o que tem de ser verdadeiro
+	- list - o resultado
+
+findall(X, ligado(a,X), L) -  encontra todos os valores de X tal que 'a' está ligado a X. Resultado fica em L.
+
+findall(X, ligado(Y,X), L) - encontra todos os valores de X que estão à direita do predicado 'ligado'. Resultado fica em L. 
+
+findall(X, ligado(m,X), L) - encontra todos os valores de X tal que 'm' está ligado a X. Resultado fica em L. (devolve lista vazia)
+
+
+
+begof(Var, Goal, List)
+
+begof(X, ligado(a,X), L) -  igual ao findall equivalente
+
+begof(X, ligado(Y,X), L) - agrupa os possíveis resultados em função dos valores que Y pode ter
+begof(X, Y^ligado(Y,X, L)) - igual ao findall equivalente
+
+findall(X, ligado(m,X), L) - devolve no em vez de lista vazia
+
+
+
+
+setof(Var, Goal, List) - igual ao begof mas o resultado vem ordenado e sem valores repetidos
+
+
+
+Para o trabalho:
+	findall(X-Y, validMove(J, Tab, X, Y), L)
+
+	setof(V-X-Y, (ValidMove(J, Tab, X, Y, NovoTab, NovoJogador), avalia(NovoTab, V)), L)
+
+
+path(Start, End, Path)
+
+
+//Caso base
+path(End, End, [End]).
+path(Start, End, [ Start | Resto]):- 
+	ligado(Start, Next)
+	path(Next, End, Resto).
+	
+//Maneira sem ciclos
+path(Start, End, Path):- path(Start, End, [ Start ], Path).
+
+path(End, End, Path, Path).
+
+path(Start, End, Temp, Path):-
+		ligado(Start, Next),
+		\+member(Next, Temp).
+		append(Temp, [ Next ], NTemp),
+		path(Next, End, NTemp, Path).
+
+
+
+// Caminho mais curto
+setof(Len-Path, (path(Start, End, Path), length(Path, Len)), L).
+
+	
