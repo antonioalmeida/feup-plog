@@ -1,10 +1,9 @@
-:-include('userInput.pl').
-:-include('game.pl').
+:-include('test2.pl').
 
-mainMenu:-
+mainMenu( FinalBoard ):-
 	write('Bem vindo ao Xadrersi.'), nl,
 	write('O que vai ser hoje?'), nl,
-	playXadrersi.
+	playXadrersi( FinalBoard ).
 
 displayOptions:-
 	write('1 - Single player match.'), nl,
