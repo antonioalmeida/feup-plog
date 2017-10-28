@@ -1,15 +1,4 @@
-:- use_module(library(lists)).
-
-readLine( Line ):-
-	get_char( Char ),
-	readAllChars( Char, Line ).
-
-% Line terminators
-readAllChars('\n', []).
-
-readAllChars( Char, [ Char | MoreChars ] ):-
-	get_char( NewChar ),
-	readAllChars( NewChar, MoreChars ).
-
-	
-
+% replace element at I with X
+replace([_|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
+replace(L, _, _, L). 

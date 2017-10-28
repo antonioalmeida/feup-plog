@@ -3,19 +3,23 @@
 
 getPieceDisplay(0, 32). % space
 
+% DONT FORGET : update internal 
+% piece representation on final
+% report 
+
 %white pieces
 getPieceDisplay(1, 9812). % king
 getPieceDisplay(2, 9813). % queen
-getPieceDisplay(3, 9815). % bishop
-getPieceDisplay(4, 9815). % knight
-getPieceDisplay(5, 9814). % rook
+getPieceDisplay(3, 9814). % rook
+getPieceDisplay(4, 9815). % bishop
+getPieceDisplay(5, 9815). % knight
 
 %black pieces
 getPieceDisplay(6, 9818). % king
 getPieceDisplay(7, 9819). % queen
-getPieceDisplay(8, 9821). % bishop
-getPieceDisplay(9, 9822). % knight
-getPieceDisplay(10, 9820). % rook
+getPieceDisplay(8, 9820). % rook
+getPieceDisplay(9, 9821). % bishop
+getPieceDisplay(10, 9822). % knight
 
 displayBoard( Board ) :-
 	displayBoardHeader,
