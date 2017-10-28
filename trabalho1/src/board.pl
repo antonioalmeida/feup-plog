@@ -1,20 +1,21 @@
 :- use_module(library(random)).
 :- use_module(library(system)).
 
+getPieceDisplay(0, 32). % space
+
 %white pieces
-getPieceDisplay(0, ' ').
-getPieceDisplay(1, 'K').
-getPieceDisplay(2, 'Q').
-getPieceDisplay(3, 'B').
-getPieceDisplay(4, 'H').
-getPieceDisplay(5, 'R').
+getPieceDisplay(1, 9812). % king
+getPieceDisplay(2, 9813). % queen
+getPieceDisplay(3, 9815). % bishop
+getPieceDisplay(4, 9815). % knight
+getPieceDisplay(5, 9814). % rook
 
 %black pieces
-getPieceDisplay(6, 'k').
-getPieceDisplay(7, 'q').
-getPieceDisplay(8, 'b').
-getPieceDisplay(9, 'h').
-getPieceDisplay(10, 'r').
+getPieceDisplay(6, 9818). % king
+getPieceDisplay(7, 9819). % queen
+getPieceDisplay(8, 9821). % bishop
+getPieceDisplay(9, 9822). % knight
+getPieceDisplay(10, 9820). % rook
 
 displayBoard( Board ) :-
 	displayBoardHeader,
@@ -38,7 +39,7 @@ displayLine([], N):-
 displayLine( [ CurrentPiece | T ] , N ):-
 	write('|   '),
 	getPieceDisplay(CurrentPiece, PieceDisplay),
-	write(PieceDisplay),
+	put_code(PieceDisplay),
 	write('   '),
 	displayLine(T, N).
 
@@ -62,3 +63,4 @@ initialBoard([[0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0]]).
+
