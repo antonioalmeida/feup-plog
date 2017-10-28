@@ -1,12 +1,10 @@
-:-include('utils.pl').
+:-include('userInput.pl').
 :-include('game.pl').
 
 mainMenu:-
 	write('Bem vindo ao Xadrersi.'), nl,
 	write('O que vai ser hoje?'), nl,
-	displayOptions,
-	read( Option ),
-	.
+	playXadrersi.
 
 displayOptions:-
 	write('1 - Single player match.'), nl,
