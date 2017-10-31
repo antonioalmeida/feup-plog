@@ -29,35 +29,44 @@ displayBoard( Board ) :-
 
 displayBoardTail([], 0). 
 
-displayBoardTail( [ Line | T ], N ):-
-	write('|       |       |       |       |       |       |       |       |'), nl,
-	write('-----------------------------------------------------------------'), nl,
-	write('|       |       |       |       |       |       |       |       |'), nl,
-	displayLine(Line, N), nl,
+displayBoardTail( [ Row | T ], N ):-
+	write('---------------------------------'), nl,
+	displayRow(Row, N), nl,
 	N1 is N-1,
 	displayBoardTail(T, N1).
 
-displayLine([], N):- 
-	write('|  '), displayNumber(N).
+displayRow([], N):- 
+	write('| '), displayNumber(N).
 
-displayLine( [ CurrentPiece | T ] , N ):-
-	write('|   '),
+displayRow( [ CurrentPiece | T ] , N ):-
+	write('| '),
 	getPieceDisplay(CurrentPiece, PieceDisplay),
 	put_code(PieceDisplay),
-	write('   '),
-	displayLine(T, N).
+	write(' '),
+	displayRow(T, N).
 
 displayBoardHeader:- 
 	nl,
-	write('     a      b       c       d       e       f       g       h     '),
+	write('  a   b   c   d   e   f   g   h '),
 	nl.
 
 displayBottom:-
-	write('|       |       |       |       |       |       |       |       |'), nl,
-	write('-----------------------------------------------------------------'), nl.
+	write('---------------------------------'), nl.
 
 
 displayNumber(N) :- write(N), !.
+
+% verifies if given board position is empty (aka == 0)
+isEmpty( Board, X, Y ):-
+	N is 0,
+	isEmptyAux( Board, N, X, Y ).
+
+isEmptyAux( [ Row | RestOfBoard ], Y, X, Y ):-
+	nth0( X, Row, 0). % true if Row[X] is 0
+
+isEmptyAux( [ Row | RestOfBoard ], N, X, Y ):-
+	N1 is N+1,
+	isEmptyAux( RestOfBoard, N1, X, Y).
 
 initialBoard([[0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],

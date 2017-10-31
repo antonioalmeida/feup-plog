@@ -18,35 +18,10 @@ playGame( Player, Board, FinalBoard ):-
 	makeMove( Board, Piece, X, Y, FinalBoard),
 	displayBoard( FinalBoard ).
 
-% playGame( Game, Board, Board ):-
-%	sendGame( Game, Board ).
-
-% playGame( Player, Board, FinalBoard ):-
-%	getOrderedMoves( Player, Board, MovesList ),
-%	getBestMove( MovesList, BestMove ),
-%	makeMove( Board, BestMove, NewBoard ),
-%	getNextPlayer( Player, NextPlayer ),
-%	displayBoard( NewBoard ),
-%	playGame( NextPlayer, NewBoard, FinalBoard ).
-
 getNextPlayer( CurrentPlayer, NewPlayer ):-
 	(CurrentPlayer == whitePlayer -> 
 		NewPlayer is blackPlayer;
-		NewPlayer is whitePlayer).
- 
-% getValidMove( Player, Board, Piece, X, Y, NewBoard ):-
- 	% one of the most important functions to develop % 
-
- % Result : int
-% evaluateBoard( Board, Result ):- 
- 	% also one of the most important functions %
-
-%getOrderedMoves( Player, Board, MovesList ):-
-% 	setof(Evaluation-X-Y, 
-% 		(getValidMove( Player, Board, X, Y, NewBoard )), evaluateBoard( NewBoard, Evaluation)),
-% 		MovesList ).
-
-%getBestMove( [ BestMove | _], BestMove ).
+		NewPlayer is whitePlayer). 
 
 % working
 makeMove( Board, Piece, X, Y, NewBoard ):-
@@ -58,10 +33,18 @@ makeMove( Board, Piece, X, Y, NewBoard ):-
 makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
 	reverse(InvertedBoard, FinalBoard).
 
+% case where N == Y
+makeMoveAux( [ CurrentLine | RestOfBoard ], Y, Piece, X, Y, TempBoard, FinalBoard):-
+	N1 is Y+1,
+	replace( CurrentLine, X, Piece, NewLine ),
+	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ NewLine | TempBoard ], FinalBoard).
+
 makeMoveAux( [ CurrentLine | RestOfBoard ], N, Piece, X, Y, TempBoard, FinalBoard ):-
 	N1 is N+1,
-	( N == Y -> replace( CurrentLine, X, Piece, NewLine), 
-				makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ NewLine | TempBoard], FinalBoard )
-		;
-			makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard )
- 	).
+	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard ).
+
+validateMove( Board, Player, Piece, X, Y):-
+	isEmpty( Board, X, Y)
+	% add more stuff
+	.
+	

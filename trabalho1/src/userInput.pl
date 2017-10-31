@@ -1,10 +1,6 @@
 :- use_module(library(lists)).
 
 % white pieces
-% uppercase doesn't work directly with read,
-% user will have to input lowercase chars
-% and we'll attribute the correct value based
-% on the current player
 getPieceFromChar('K', 1). % king
 getPieceFromChar('Q', 2). % queen
 getPieceFromChar('R', 3). % rook
@@ -32,8 +28,10 @@ getIndexFromRow('h', 7).
 
 readMoveFromUser(PieceValue, X, Y):-
 	write('What move would you like to make?'),nl,
-	write('Use the format Piece-Row-Col. Example : (K-e-4)'),nl,
-	read(PieceChar-Row-Col),
+	write('Use the format PieceRowCol. Example : (ke4)'),nl,
+	get_char(PieceChar),
+	get_char(Row),
+	read(Col),
 	getPieceFromChar(PieceChar, PieceValue),
 	getIndexFromRow(Row, X),
 	Y is 8-Col.
