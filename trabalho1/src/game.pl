@@ -1,6 +1,7 @@
 :-include('board.pl').
 :-include('userInput.pl').
 :-include('utils.pl').
+:-include('moves.pl').
 
 player(white).
 player(black).
@@ -22,7 +23,7 @@ playGame( Game ):-
 	makeMove( Board, Piece, X, Y, NextBoard ),
 
 	% prepare for next turn
-	switchPlayer( Game, GameTemp )
+	switchPlayer( Game, GameTemp ),
 	setBoard( GameTemp, NextBoard, NewGame ),
 
 	playGame( NewGame ).
@@ -48,14 +49,13 @@ makeMoveAux( [ CurrentLine | RestOfBoard ], N, Piece, X, Y, TempBoard, FinalBoar
 	N1 is N+1,
 	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard ).
 
-validateMove( Board, Player, Piece, X, Y):-
-	isEmpty( Board, X, Y)
+validateMove( Board, Player, Piece, X, Y ):-
+	isEmpty( Board, X, Y),
 	% add more stuff
 	.
 
 % Game "class"
-
-initGame(Game):-
+initGame( Game ):-
 	initialBoard( Board ),
 	Game = [ Board, white].
 
