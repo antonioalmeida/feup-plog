@@ -1,7 +1,6 @@
 :-include('board.pl').
 :-include('userInput.pl').
 :-include('utils.pl').
-:-include('moves.pl').
 
 player(white).
 player(black).
@@ -50,9 +49,8 @@ makeMoveAux( [ CurrentLine | RestOfBoard ], N, Piece, X, Y, TempBoard, FinalBoar
 	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard ).
 
 validateMove( Board, Player, Piece, X, Y ):-
-	isEmpty( Board, X, Y),
+	isEmpty( Board, X, Y).
 	% add more stuff
-	.
 
 % Game "class"
 initGame( Game ):-

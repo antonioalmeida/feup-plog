@@ -7,18 +7,18 @@ getPieceDisplay(0, 32). % space
 % report 
 
 %white pieces
-getPieceDisplay(1, 9812). % king
-getPieceDisplay(2, 9813). % queen
-getPieceDisplay(3, 9814). % rook
-getPieceDisplay(4, 9815). % bishop
-getPieceDisplay(5, 9816). % knight
+getPieceDisplay('K', 9812). % king
+getPieceDisplay('Q', 9813). % queen
+getPieceDisplay('R', 9814). % rook
+getPieceDisplay('B', 9815). % bishop
+getPieceDisplay('N', 9816). % knight
 
 %black pieces
-getPieceDisplay(6, 9818). % king
-getPieceDisplay(7, 9819). % queen
-getPieceDisplay(8, 9820). % rook
-getPieceDisplay(9, 9821). % bishop
-getPieceDisplay(10, 9822). % knight
+getPieceDisplay('k', 9818). % king
+getPieceDisplay('q', 9819). % queen
+getPieceDisplay('r', 9820). % rook
+getPieceDisplay('b', 9821). % bishop
+getPieceDisplay('n', 9822). % knight
 
 displayBoard( Board ) :-
 	displayBoardHeader,
