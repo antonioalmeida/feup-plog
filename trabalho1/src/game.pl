@@ -2,26 +2,31 @@
 :-include('userInput.pl').
 :-include('utils.pl').
 
-player(whitePlayer).
-player(blackPlayer).
+player(white).
+player(black).
 
 % high level play match function %
-playXadrersi(FinalBoard):-
-	initialBoard( InitialBoard ),
-	displayBoard( InitialBoard ),
-	Player = whitePlayer,
-	playGame( Player, InitialBoard, FinalBoard ).
+playXadrersi:-
+	initGame( Game ), !,
+	playGame( Game ).
 
-playGame( Player, Board, FinalBoard ):-
+playGame( Game ):-
+	% get stuff from game class
+	getBoard( Game, Board ),
+	getCurrentPlayer( Game, Player ),
+	displayBoard( Board ),
+
+	% read and validate move
 	readMoveFromUser( Piece, X, Y ),
-	write(Piece), nl, write(X), nl, write(Y),
-	makeMove( Board, Piece, X, Y, FinalBoard),
-	displayBoard( FinalBoard ).
+	validateMove( Board, Player, Piece, X, Y ),
+	makeMove( Board, Piece, X, Y, NextBoard ),
 
-getNextPlayer( CurrentPlayer, NewPlayer ):-
-	(CurrentPlayer == whitePlayer -> 
-		NewPlayer is blackPlayer;
-		NewPlayer is whitePlayer). 
+	% prepare for next turn
+	switchPlayer( Game, GameTemp )
+	setBoard( GameTemp, NextBoard, NewGame ),
+
+	playGame( NewGame ).
+
 
 % working
 makeMove( Board, Piece, X, Y, NewBoard ):-
@@ -47,4 +52,27 @@ validateMove( Board, Player, Piece, X, Y):-
 	isEmpty( Board, X, Y)
 	% add more stuff
 	.
+
+% Game "class"
+
+initGame(Game):-
+	initialBoard( Board ),
+	Game = [ Board, white].
+
+getBoard( Game, Board ):-
+	elementAt(0, Game, Board).
+
+setBoard( Game, Board, NewGame ):-
+	replace( Game, 0, Board, NewGame).
+
+getCurrentPlayer( Game, Player ):-
+	elementAt(1, Game, Player).
+
+switchPlayer( Game, NewGame ):-
+	getCurrentPlayer( Game, CurrentPlayer ),
+	switchPlayerAux( CurrentPlayer, NewPlayer ),
+	replace( Game, 1, NewPlayer, NewGame ).
+
+switchPlayerAux(white, black).
+switchPlayerAux(black, white).
 	

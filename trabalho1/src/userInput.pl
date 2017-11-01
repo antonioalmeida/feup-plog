@@ -27,12 +27,18 @@ getIndexFromRow('g', 6).
 getIndexFromRow('h', 7).
 
 readMoveFromUser(PieceValue, X, Y):-
+	get_char(_), % this fixes the bug for like 2 moves
 	write('What move would you like to make?'),nl,
-	write('Use the format PieceRowCol. Example : (ke4)'),nl,
+	write('Use the format PieceRowCol. Example : (ke4)'), nl,
 	get_char(PieceChar),
 	get_char(Row),
 	read(Col),
+	write('Got here'), nl,
+	write('First : '),
+	write(PieceChar), write('row'),write(Row), write('col'),write(Col),
 	getPieceFromChar(PieceChar, PieceValue),
 	getIndexFromRow(Row, X),
-	Y is 8-Col.
+	Y is 8-Col,
+	write('Read : '),
+	write(PieceChar-Row-Col).
 

@@ -1,4 +1,3 @@
-:- use_module(library(random)).
 :- use_module(library(system)).
 
 getPieceDisplay(0, 32). % space
@@ -12,7 +11,7 @@ getPieceDisplay(1, 9812). % king
 getPieceDisplay(2, 9813). % queen
 getPieceDisplay(3, 9814). % rook
 getPieceDisplay(4, 9815). % bishop
-getPieceDisplay(5, 9815). % knight
+getPieceDisplay(5, 9816). % knight
 
 %black pieces
 getPieceDisplay(6, 9818). % king
