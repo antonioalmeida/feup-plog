@@ -27,27 +27,6 @@ playGame( Game ):-
 
 	playGame( NewGame ).
 
-
-% working
-makeMove( Board, Piece, X, Y, NewBoard ):-
-	N is 0,
-	makeMoveAux( Board, N, Piece, X, Y, [], NewBoard ).
-
-% base case - need to reverse list
-% TODO: find a way to do this without having to reverse final list
-makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
-	reverse(InvertedBoard, FinalBoard).
-
-% case where N == Y
-makeMoveAux( [ CurrentLine | RestOfBoard ], Y, Piece, X, Y, TempBoard, FinalBoard):-
-	N1 is Y+1,
-	replace( CurrentLine, X, Piece, NewLine ),
-	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ NewLine | TempBoard ], FinalBoard).
-
-makeMoveAux( [ CurrentLine | RestOfBoard ], N, Piece, X, Y, TempBoard, FinalBoard ):-
-	N1 is N+1,
-	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard ).
-
 validateMove( Board, Player, Piece, X, Y ):-
 	isEmpty( Board, X, Y).
 	% add more stuff
@@ -55,13 +34,20 @@ validateMove( Board, Player, Piece, X, Y ):-
 % Game "class"
 initGame( Game ):-
 	initialBoard( Board ),
-	Game = [ Board, white].
+	initialBoard( AttackedBoard ),
+	Game = [ Board, white, AttackedBoard ].
 
 getBoard( Game, Board ):-
 	elementAt(0, Game, Board).
 
+getAttackedBoard( Game, AttackedBoard ):-
+	elementAt(2, Game, AttackedBoard).
+
 setBoard( Game, Board, NewGame ):-
 	replace( Game, 0, Board, NewGame).
+
+setAttackedBoard( Game, AttackedBoard, NewGame ):-
+	replace( Game, 2, AttackedBoard, NewGame).
 
 getCurrentPlayer( Game, Player ):-
 	elementAt(1, Game, Player).
