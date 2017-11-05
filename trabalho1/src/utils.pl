@@ -20,11 +20,7 @@ isEmptyAux( [ Row | RestOfBoard ], N, X, Y ):-
 	N1 is N+1,
 	isEmptyAux( RestOfBoard, N1, X, Y).
 
-isWithinLimits(0).
-isWithinLimits(1).
-isWithinLimits(2).
-isWithinLimits(3).
-isWithinLimits(4).
-isWithinLimits(5).
-isWithinLimits(6).
-isWithinLimits(7).
+isWithinLimits(N):-
+	N > -1,
+	N < 8.
+

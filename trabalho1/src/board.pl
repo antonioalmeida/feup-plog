@@ -73,16 +73,10 @@ makeMove( Board, Piece, X, Y, NewBoard ):-
 	N is 0,
 	makeMoveAux( Board, N, Piece, X, Y, [], NewBoard ).
 
-% case where X is off limits 
+% case where X or Y is off limits 
 makeMove( Board, Piece, X, Y, NewBoard ):-
-	\+(isWithinLimits(X)),
 	NewBoard = Board.
-
-% case where Y is off limits 
-makeMove( Board, Piece, X, Y, NewBoard ):-
-	\+(isWithinLimits(Y)),
-	NewBoard = Board.
-
+	
 % base case - need to reverse list
 % TODO: find a way to do this without having to reverse final list
 makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
