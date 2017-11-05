@@ -59,7 +59,6 @@ attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPosition
     Yminus2 is Y-2,
     Yplus1 is Y+1,
     Yminus1 is Y-1,
-
     makeMove( AttackedPositions, '1', X+1, Yplus2, AttackedPositions2 ),
     makeMove( AttackedPositions2, '1', X+1, Yminus2, AttackedPositions3 ),
     makeMove( AttackedPositions3, '1', X-1, Yplus2, AttackedPositions4 ),
@@ -73,30 +72,62 @@ attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPosition
 % Rook
 attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isRook( Piece ),
-    rookAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
-    rookAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
-    rookAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
-    rookAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ),
+    pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
+    pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
+    pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
+    pieceAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ),
     displayBoard( FinalAttackedPositions ).
 
-rookAttackedPositions( _, AttackedPositions, 8, _, _, _, FinalAttackedPositions):-
+% Bishop
+attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isBishop( Piece ),
+    pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 1, AttackedPositions1 ),
+    pieceAttackedPositions( Board, AttackedPositions1, X, Y, 1, -1, AttackedPositions2 ),
+    pieceAttackedPositions( Board, AttackedPositions2, X, Y, -1, 1, AttackedPositions3 ),
+    pieceAttackedPositions( Board, AttackedPositions3, X, Y, -1, -1, FinalAttackedPositions ),
+    displayBoard( FinalAttackedPositions ).
+
+% Queen
+attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isQueen( Piece ),
+    pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
+    pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
+    pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
+    pieceAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, AttackedPositions4 ),
+    pieceAttackedPositions( Board, AttackedPositions4, X, Y, 1, 1, AttackedPositions5 ),
+    pieceAttackedPositions( Board, AttackedPositions5, X, Y, 1, -1, AttackedPositions6 ),
+    pieceAttackedPositions( Board, AttackedPositions6, X, Y, -1, 1, AttackedPositions7 ),
+    pieceAttackedPositions( Board, AttackedPositions7, X, Y, -1, -1, FinalAttackedPositions ),
+    displayBoard( FinalAttackedPositions ).
+
+% Recursive generic function %
+
+% case where off limits in x
+pieceAttackedPositions( _, AttackedPositions, 8, _, _, _, FinalAttackedPositions):-
     FinalAttackedPositions is AttackedPositions.
 
-rookAttackedPositions( _, AttackedPositions, _, 8, _, _, FinalAttackedPositions):-
+pieceAttackedPositions( _, AttackedPositions, -1, _, _, _, FinalAttackedPositions):-
+    FinalAttackedPositions is AttackedPositions.
+
+% case where off limits in y
+pieceAttackedPositions( _, AttackedPositions, _, 8, _, _, FinalAttackedPositions):-
+    FinalAttackedPositions is AttackedPositions.
+
+pieceAttackedPositions( _, AttackedPositions, _, -1, _, _, FinalAttackedPositions):-
     FinalAttackedPositions is AttackedPositions.
 
 % case where board location is occupied
-rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
+pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     \+(isEmpty( Board, CurrX, CurrY )),
     makeMove( AttackedPositions, '1', CurrX, CurrY, FinalAttackedPositions ).
 
 % case where board location is empty
-rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
+pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     isEmpty( Board, CurrX, CurrY ),
     makeMove( AttackedPositions, '1', CurrX, CurrY, AttackedPositions1 ),
-    rookAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
+    pieceAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
 isKing('k').
 isKing('K').
@@ -106,3 +137,9 @@ isKnight('n').
 
 isRook('R').
 isRook('r').
+
+isBishop('b').
+isBishop('B').
+
+isQueen('q').
+isQueen('Q').
