@@ -13,20 +13,23 @@ calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
     getPieceAt( Board, X, Y, Piece ),
     attackingPositions( Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
     X1 is X+1,
-    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
+    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y, NewAttackedBoard).
 
 % case where board location is empty
 calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
     \+(X==8),
     isEmpty( Board, X, Y ),
+    write('Empty'),
     X1 is X+1,
-    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
+    calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y, NewAttackedBoard).
 
 % case where X == 8
-calculateAttackedPositionsAux( Board, AttackedBoard, 8, Y, NewAttackedBoard ):-
-    X1 is 0,
+calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
+    X == 8, X1 is 0,
+    write('X is 8'),
     Y1 is Y+1,
-    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
+    write('Passed'),
+    calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y1, NewAttackedBoard).
 
 % King
 attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
