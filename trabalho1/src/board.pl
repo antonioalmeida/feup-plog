@@ -2,10 +2,10 @@
 :-include('utils.pl').
 
 getPieceDisplay(0, 32). % space
-
-% DONT FORGET : update internal 
+getPieceDisplay('1', 65). % 'A' - temporary
+% DONT FORGET : update internal
 % piece representation on final
-% report 
+% report
 
 %white pieces
 getPieceDisplay('K', 9812). % king
@@ -23,7 +23,7 @@ getPieceDisplay('n', 9822). % knight
 
 % not tested %
 getPieceAt( Board, X, Y, Piece ):-
-	getPieceAtAux( Board, 0, X, Y, Piece).		
+	getPieceAtAux( Board, 0, X, Y, Piece).
 
 getPieceAtAux( [ CurrentLine | RestOfBoard ], Y, X, Y, Piece ):-
 	elementAt( X, CurrentLine, Piece ).
@@ -38,7 +38,7 @@ displayBoard( Board ) :-
 	displayBoardTail(Board, N),
 	displayBottom.
 
-displayBoardTail([], 0). 
+displayBoardTail([], 0).
 
 displayBoardTail( [ Row | T ], N ):-
 	write('---------------------------------'), nl,
@@ -46,7 +46,7 @@ displayBoardTail( [ Row | T ], N ):-
 	N1 is N-1,
 	displayBoardTail(T, N1).
 
-displayRow([], N):- 
+displayRow([], N):-
 	write('| '), displayNumber(N).
 
 displayRow( [ CurrentPiece | T ] , N ):-
@@ -56,7 +56,7 @@ displayRow( [ CurrentPiece | T ] , N ):-
 	write(' '),
 	displayRow(T, N).
 
-displayBoardHeader:- 
+displayBoardHeader:-
 	nl,
 	write('  a   b   c   d   e   f   g   h '),
 	nl.
@@ -94,4 +94,3 @@ initialBoard([[0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0]]).
-
