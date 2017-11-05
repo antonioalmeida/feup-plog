@@ -23,14 +23,14 @@ getPieceDisplay('n', 9822). % knight
 
 % not tested %
 getPieceAt( Board, X, Y, Piece ):-
-	getPieceAux( Board, 0, X, Y, Piece).		
+	getPieceAtAux( Board, 0, X, Y, Piece).		
 
 getPieceAtAux( [ CurrentLine | RestOfBoard ], Y, X, Y, Piece ):-
 	elementAt( X, CurrentLine, Piece ).
 
 getPieceAtAux( [ CurrentLine | RestOfBoard ], N, X, Y, Piece ):-
 	N1 is N+1,
-	getPieceAux( RestOfBoard, N1, X, Y, Piece).
+	getPieceAtAux( RestOfBoard, N1, X, Y, Piece).
 
 displayBoard( Board ) :-
 	displayBoardHeader,

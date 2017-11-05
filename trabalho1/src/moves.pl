@@ -5,14 +5,31 @@ calculateAttackedPositions( Game ):-
     getAttackedBoard( Game, AttackedBoard ),
     X is 0, Y is 0,
     calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ).
-    % needs to be completed %
 
-calculateAttackedPositionsAux( Board, AttackedPositions, X, Y, NewAttackedBoard ):-
-    diff(isEmpty( Board, X, Y ), true). % does this work?
-    % needs to be completed %
+% case where board locations is NOT empty
+calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
+    \+(X==8),
+    \+(isEmpty( Board, X, Y )),
+    getPieceAt( Board, X, Y, Piece ),
+    attackingPositions( Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
+    X1 is X+1, 
+    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
 
+% case where board location is empty
+calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
+    \+(X==8),
+    isEmpty( Board, X, Y ),
+    X1 is X+1, 
+    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
+
+% case where X == 8
+calculateAttackedPositionsAux( Board, AttackedBoard, 8, Y, NewAttackedBoard ):-
+    X1 is 0,
+    Y1 is Y+1,
+    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y1, NewAttackedBoard).
+ 
 % King
-attackingPositions( AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKing( Piece ),
     write('King'),
     Y1 is Y-1,
@@ -25,7 +42,7 @@ attackingPositions( AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     displayBoard(FinalAttackedPositions).
 
 % Knight
-attackingPositions( AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKnight( Piece ),
     write('Knight'),
     Yplus2 is Y+2,
@@ -46,9 +63,39 @@ attackingPositions( AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     makeMove( AttackedPositions8, 'k', X-2, Yminus1, FinalAttackedPositions ),
     displayBoard( FinalAttackedPositions ).
 
+% Rook
+attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isRook( Piece ),
+    rookAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
+    rookAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
+    rookAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
+    rookAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ),
+    displayBoard( FinalAttackedPositions ).
+
+rookAttackedPositions( _, AttackedPositions, 8, _, _, _, FinalAttackedPositions):-
+    FinalAttackedPositions is AttackedPositions.
+
+rookAttackedPositions( _, AttackedPositions, _, 8, _, _, FinalAttackedPositions):-
+    FinalAttackedPositions is AttackedPositions.
+
+% case where board location is occupied
+rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
+    CurrX is X+DX, CurrY is Y+DY,
+    \+(isEmpty( Board, CurrX, CurrY )),
+    makeMove( AttackedPositions, 'k', CurrX, CurrY, FinalAttackedPositions ).
+
+% case where board location is empty
+rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
+    CurrX is X+DX, CurrY is Y+DY,
+    isEmpty( Board, CurrX, CurrY ),
+    makeMove( AttackedPositions, 'k', CurrX, CurrY, AttackedPositions1 ),
+    rookAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
 isKing('k').
 isKing('K').
 
 isKnight('N').
 isKnight('n').
+
+isRook('R').
+isRook('r').
