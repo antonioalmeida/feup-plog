@@ -8,7 +8,7 @@ calculateAttackedPositions( Game ):-
 
 % case where board locations is NOT empty
 calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
-    \+(X==8),
+    \+(X == 8),
     \+(isEmpty( Board, X, Y )),
     getPieceAt( Board, X, Y, Piece ),
     attackingPositions( Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
@@ -17,19 +17,20 @@ calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
 
 % case where board location is empty
 calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
-    \+(X==8),
+    \+(X == 8),
     isEmpty( Board, X, Y ),
-    write('Empty'),
     X1 is X+1,
     calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y, NewAttackedBoard).
 
 % case where X == 8
-calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
-    X == 8, X1 is 0,
-    write('X is 8'),
+calculateAttackedPositionsAux( Board, AttackedBoard, 8, Y, NewAttackedBoard ):-
+    X1 is 0,
     Y1 is Y+1,
-    write('Passed'),
     calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y1, NewAttackedBoard).
+
+% case where Y == 8 (final case)
+calculateAttackedPositionsAux( _, AttackedBoard, _, 8, NewAttackedBoard ):-
+    NewAttackedBoard = AttackedBoard.
 
 % King
 attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
@@ -88,13 +89,13 @@ rookAttackedPositions( _, AttackedPositions, _, 8, _, _, FinalAttackedPositions)
 rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     \+(isEmpty( Board, CurrX, CurrY )),
-    makeMove( AttackedPositions, 'k', CurrX, CurrY, FinalAttackedPositions ).
+    makeMove( AttackedPositions, '1', CurrX, CurrY, FinalAttackedPositions ).
 
 % case where board location is empty
 rookAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     isEmpty( Board, CurrX, CurrY ),
-    makeMove( AttackedPositions, 'k', CurrX, CurrY, AttackedPositions1 ),
+    makeMove( AttackedPositions, '1', CurrX, CurrY, AttackedPositions1 ),
     rookAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
 isKing('k').
