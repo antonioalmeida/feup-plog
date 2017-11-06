@@ -1,4 +1,5 @@
 :-include('board.pl').
+:-include('moveValidation.pl').
 :-include('userInput.pl').
 :-include('utils.pl').
 
@@ -23,7 +24,10 @@ playGame( Game ):-
 
 	% prepare for next turn
 	switchPlayer( Game, GameTemp ),
-	setBoard( GameTemp, NextBoard, NewGame ),
+	setBoard( GameTemp, NextBoard, GameTemp2 ),
+
+	% this is here just for testing
+	updateAttackedBoard( GameTemp2, NewGame ),
 
 	playGame( NewGame ).
 
@@ -34,20 +38,27 @@ validateMove( Board, Player, Piece, X, Y ):-
 % Game "class"
 initGame( Game ):-
 	initialBoard( Board ),
-	initialBoard( AttackedBoard ),
-	Game = [ Board, white, AttackedBoard ].
+	initialBoard( AttackedBoardWhite ),
+	initialBoard( AttackedBoardBlack ),
+	Game = [ Board, white, AttackedBoardWhite, AttackedBoardBlack ].
 
 getBoard( Game, Board ):-
 	elementAt(0, Game, Board).
 
-getAttackedBoard( Game, AttackedBoard ):-
+getAttackedBoard( Game, white, AttackedBoard):-
 	elementAt(2, Game, AttackedBoard).
+
+getAttackedBoard( Game, black, AttackedBoard):-
+	elementAt(3, Game, AttackedBoard).
 
 setBoard( Game, Board, NewGame ):-
 	replace( Game, 0, Board, NewGame).
 
-setAttackedBoard( Game, AttackedBoard, NewGame ):-
+setAttackedBoard( Game, white, AttackedBoard, NewGame ):-
 	replace( Game, 2, AttackedBoard, NewGame).
+
+setAttackedBoard( Game, black, AttackedBoard, NewGame ):-
+	replace( Game, 3, AttackedBoard, NewGame).
 
 getCurrentPlayer( Game, Player ):-
 	elementAt(1, Game, Player).

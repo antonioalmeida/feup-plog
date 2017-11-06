@@ -1,41 +1,45 @@
-:-include('board.pl').
-
-calculateAttackedPositions( Game ):-
+updateAttackedBoard( Game, NewGame ):-
     getBoard( Game, Board ),
-    getAttackedBoard( Game, AttackedBoard ),
+    initialBoard( AttackedBoard ),
     X is 0, Y is 0,
-    calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ).
+    updateAttackedBoardAux( white, Board, AttackedBoard, X, Y, NewAttackedBoardWhite ),
+    updateAttackedBoardAux( black, Board, AttackedBoard, X, Y, NewAttackedBoardBlack ),
+    setAttackedBoard( Game, white, NewAttackedBoardWhite, TempGame ),
+    setAttackedBoard( TempGame, black, NewAttackedBoardBlack, NewGame ),
+    nl, write('Attacked White'), nl,
+    displayBoard( NewAttackedBoardWhite ),
+    nl, write('Attacked Black'), nl,
+    displayBoard( NewAttackedBoardBlack ).
 
 % case where board locations is NOT empty
-calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
+updateAttackedBoardAux( Player, Board, AttackedBoard, X, Y, NewAttackedBoard ):-
     \+(X == 8),
     \+(isEmpty( Board, X, Y )),
     getPieceAt( Board, X, Y, Piece ),
-    attackingPositions( Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
+    attackingPositions( Player, Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
     X1 is X+1,
-    calculateAttackedPositionsAux( Board, NextAttackedBoard, X1, Y, NewAttackedBoard).
+    updateAttackedBoardAux( Player, Board, NextAttackedBoard, X1, Y, NewAttackedBoard).
 
 % case where board location is empty
-calculateAttackedPositionsAux( Board, AttackedBoard, X, Y, NewAttackedBoard ):-
+updateAttackedBoardAux( Player, Board, AttackedBoard, X, Y, NewAttackedBoard ):-
     \+(X == 8),
     isEmpty( Board, X, Y ),
     X1 is X+1,
-    calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y, NewAttackedBoard).
+    updateAttackedBoardAux( Player, Board, AttackedBoard, X1, Y, NewAttackedBoard).
 
 % case where X == 8
-calculateAttackedPositionsAux( Board, AttackedBoard, 8, Y, NewAttackedBoard ):-
+updateAttackedBoardAux( Player, Board, AttackedBoard, 8, Y, NewAttackedBoard ):-
     X1 is 0,
     Y1 is Y+1,
-    calculateAttackedPositionsAux( Board, AttackedBoard, X1, Y1, NewAttackedBoard).
+    updateAttackedBoardAux( Player, Board, AttackedBoard, X1, Y1, NewAttackedBoard).
 
 % case where Y == 8 (final case)
-calculateAttackedPositionsAux( _, AttackedBoard, _, 8, NewAttackedBoard ):-
+updateAttackedBoardAux( Player, _, AttackedBoard, _, 8, NewAttackedBoard ):-
     NewAttackedBoard = AttackedBoard.
 
 % King
-attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
-    isKing( Piece ),
-    write('King'),
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isKing( Piece, Player ),
     Y1 is Y-1,
     Y2 is Y+1,
     X1 is X-1,
@@ -48,13 +52,11 @@ attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPosition
     makeMove( AttackedPositions5, '1', X2, Y1, AttackedPositions6), % 1 means attacked position
     makeMove( AttackedPositions6, '1', X2, Y2, AttackedPositions7), % 1 means attacked position
     makeMove( AttackedPositions7, '1', X, Y1, AttackedPositions8), % 1 means attacked position
-    makeMove( AttackedPositions8, '1', X, Y2, FinalAttackedPositions), % 1 means attacked position
-    displayBoard(FinalAttackedPositions).
+    makeMove( AttackedPositions8, '1', X, Y2, FinalAttackedPositions). % 1 means attacked position
 
 % Knight
-attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
-    isKnight( Piece ),
-    write('Knight'),
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isKnight( Piece, Player ),
     Yplus2 is Y+2,
     Yminus2 is Y-2,
     Yplus1 is Y+1,
@@ -66,29 +68,26 @@ attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPosition
     makeMove( AttackedPositions5, '1', X+2, Yplus1, AttackedPositions6 ),
     makeMove( AttackedPositions6, '1', X+2, Yminus1, AttackedPositions7 ),
     makeMove( AttackedPositions7, '1', X-2, Yplus1, AttackedPositions8 ),
-    makeMove( AttackedPositions8, '1', X-2, Yminus1, FinalAttackedPositions ),
-    displayBoard( FinalAttackedPositions ).
+    makeMove( AttackedPositions8, '1', X-2, Yminus1, FinalAttackedPositions ).
 
 % Rook
-attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
-    isRook( Piece ),
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isRook( Piece, Player ),
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
-    pieceAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ),
-    displayBoard( FinalAttackedPositions ).
+    pieceAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ).
 
 % Bishop
-attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
-    isBishop( Piece ),
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    isBishop( Piece, Player ),
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 1, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, 1, -1, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, -1, 1, AttackedPositions3 ),
-    pieceAttackedPositions( Board, AttackedPositions3, X, Y, -1, -1, FinalAttackedPositions ),
-    displayBoard( FinalAttackedPositions ).
+    pieceAttackedPositions( Board, AttackedPositions3, X, Y, -1, -1, FinalAttackedPositions ).
 
 % Queen
-attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isQueen( Piece ),
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
@@ -97,8 +96,11 @@ attackingPositions( Board, AttackedPositions, Piece, X, Y, FinalAttackedPosition
     pieceAttackedPositions( Board, AttackedPositions4, X, Y, 1, 1, AttackedPositions5 ),
     pieceAttackedPositions( Board, AttackedPositions5, X, Y, 1, -1, AttackedPositions6 ),
     pieceAttackedPositions( Board, AttackedPositions6, X, Y, -1, 1, AttackedPositions7 ),
-    pieceAttackedPositions( Board, AttackedPositions7, X, Y, -1, -1, FinalAttackedPositions ),
-    displayBoard( FinalAttackedPositions ).
+    pieceAttackedPositions( Board, AttackedPositions7, X, Y, -1, -1, FinalAttackedPositions ).
+
+% Case where piece is from different player
+attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+    FinalAttackedPositions = AttackedPositions.
 
 % Recursive generic function %
 
@@ -129,17 +131,17 @@ pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPos
     makeMove( AttackedPositions, '1', CurrX, CurrY, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
-isKing('k').
-isKing('K').
+isKing('K', white).
+isKing('k', black).
 
-isKnight('N').
-isKnight('n').
+isKnight('N', white).
+isKnight('n', black).
 
-isRook('R').
-isRook('r').
+isRook('R', white).
+isRook('r', black).
 
-isBishop('b').
-isBishop('B').
+isBishop('B', white).
+isBishop('b', black).
 
-isQueen('q').
-isQueen('Q').
+isQueen('Q', white).
+isQueen('q', black).
