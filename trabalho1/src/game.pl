@@ -3,6 +3,8 @@
 :-include('userInput.pl').
 :-include('utils.pl').
 
+:-dynamic piecePlayed/2.
+
 % high level play match function %
 playXadrersi:-
 	initGame( Game ), !,
@@ -16,8 +18,10 @@ playGame( Game ):-
 	displayBoard( Board ),
 
 	% read and validate move
-	readMoveFromUser( Piece, X, Y ),
-	validateMove( Board, N, Player, Piece, X, Y ),
+	readMoveFromUser( Player, Piece, X, Y ),
+	validateMove( Game, Player, Piece, X, Y ),
+
+	% make and udpdate moves
 	makeMove( Board, Piece, X, Y, NextBoard ),
 	updateMadeMoves( Player, Piece ),
 
@@ -29,34 +33,35 @@ playGame( Game ):-
 
 	playGame( NewGame ).
 
-validateMove( Board, 0, Player, Piece, X, Y ):-
-	isEmpty( Board, X, Y ), % just in case 	
+% first move, white king needs to be played
+validateMove( Game, Player, Piece, X, Y ):-
+	getTurnIndex( Game, N ),
+	N == 0,
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ), 
 	isKing( Piece, Player ).
 
-validateMove( Board, N, Player, Piece, X, Y ):-
+% regular move
+validateMove( Game, Player, Piece, X, Y ):-
+	\+(piecePlayed( Player, Piece )),
+	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
 
-	moveExceptions( Board, N, Player, Piece, X, Y ),
-	write('Ola'),
-	write('Adeus'),
-
 	otherPlayer( Player, Other ),
-	updateAttackedBoard( Board, Other, AttackedBoard ),
-	write('Cenas'),
+	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, TempPiece ),
-	write('Fixe'),
 	TempPiece == '1'.
 
-% first and final move
-moveExceptions( _, 0, white, 'K', _, _ ).
-moveExceptions( _, 7, black, 'k', _, _ ).
+% final move
+validateMove( Game, 7, Player, Piece, X, Y ):-
+	\+(piecePlayed( Player, Piece )),
+	getBoard( Game, Board ),
 
-% all true for now
-moveExceptions(_, _, _, _, _, _).
+	isEmpty( Board, X, Y),
+	isKing( Piece, Player ).
 
 updateMadeMoves( Player, Piece ):-
-	assert( piecePlayed( Player, Piece )).
-
+	assert(piecePlayed( Player, Piece )).
 
 %%%%%%%%%%%%%%%%
 % Game "class" %

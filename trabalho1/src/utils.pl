@@ -21,20 +21,5 @@ isEmptyAux( [ Row | RestOfBoard ], N, X, Y ):-
 	isEmptyAux( RestOfBoard, N1, X, Y).
 
 isWithinLimits(N):-
-	N > -1,
+	N >= 0,
 	N < 8.
-
-isKing('K', white).
-isKing('k', black).
-
-isKnight('N', white).
-isKnight('n', black).
-
-isRook('R', white).
-isRook('r', black).
-
-isBishop('B', white).
-isBishop('b', black).
-
-isQueen('Q', white).
-isQueen('q', black).
