@@ -15,7 +15,7 @@ playXadrersi:-
 	playGame( Game ).
 
 playGame( Game ):-
-	gameOver( cenas ),
+	gameOver( currentGame ),
 	write(' Game over!!!'), nl.
 
 playGame( Game ):-

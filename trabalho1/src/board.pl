@@ -92,6 +92,26 @@ makeMoveAux( [ CurrentLine | RestOfBoard ], N, Piece, X, Y, TempBoard, FinalBoar
 	N1 is N+1,
 	makeMoveAux( RestOfBoard, N1, Piece, X, Y, [ CurrentLine | TempBoard ], FinalBoard ).
 
+evaluateBoard( Board, Score ):-
+	evaluateBoardAux( Board, 0, Score ).
+
+evaluateBoardAux( [ CurrentLine | RestOfBoard ], CurrentScore, Score ):-
+	evaluateBoardLine( CurrentLine, 0, LineScore ),
+	Temp is LineScore+CurrentScore,
+	evaluateBoardAux( RestOfBoard, Temp, Score ).
+
+evaluateBoardAux( [], Score, Score ).
+
+evaluateBoardLine( [ 'A' | RestOfLine ], CurrentScore, Score):-
+	Temp is CurrentScore+1,
+	evaluateBoardLine( RestOfLine, Temp, Score ).
+
+evaluateBoardLine( [ 0 | RestOfLine ], CurrentScore, Score ):-
+	evaluateBoardLine( RestOfLine, CurrentScore, Score ).
+
+evaluateBoardLine( [], Score, Score ).
+
+
 initialBoard([[0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
