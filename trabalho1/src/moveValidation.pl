@@ -1,3 +1,8 @@
+% this might be a better approach
+updateAttackedBoard( Board, Player, AttackedBoard ):-
+    initialBoard( Temp ),
+    updateAttackedBoardAux( Player, Board, Temp, X, Y, AttackedBoard ).
+
 updateAttackedBoard( Game, NewGame ):-
     getBoard( Game, Board ),
     initialBoard( AttackedBoard ),
@@ -88,7 +93,7 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 
 % Queen
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
-    isQueen( Piece ),
+    isQueen( Piece, Player ),
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),

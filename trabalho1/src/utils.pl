@@ -24,3 +24,17 @@ isWithinLimits(N):-
 	N > -1,
 	N < 8.
 
+isKing('K', white).
+isKing('k', black).
+
+isKnight('N', white).
+isKnight('n', black).
+
+isRook('R', white).
+isRook('r', black).
+
+isBishop('B', white).
+isBishop('b', black).
+
+isQueen('Q', white).
+isQueen('q', black).
