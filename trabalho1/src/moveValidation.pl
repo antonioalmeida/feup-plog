@@ -13,13 +13,16 @@ validateMove( Game, Player, Piece, X, Y ):-
 	isKing( Piece, Player ).
 
 % final move, black king needs to be played
-validateMove( Game, 7, Player, Piece, X, Y ):-
+validateMove( Game, Player, Piece, X, Y ):-
+	getTurnIndex( Game, N ),
+	N == 15	,
 	!, 
 	\+(piecePlayed( Player, Piece )),
 	getBoard( Game, Board ),
 
 	isEmpty( Board, X, Y),
-	isKing( Piece, Player ).
+	isKing( Piece, Player ),
+	assert( gameOver( cenas )).
 
 % move where player is forced to use queen
 validateMove( Game, Player, Piece, X, Y ):-
@@ -37,9 +40,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 % move where first player uses queen
 validateMove( Game, Player, Piece, X, Y ):-
-	write('Move where first player uses queen.'), nl,
 	\+(piecePlayed( Player, Piece )),
-	write('Passed'), nl,
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
@@ -50,11 +51,18 @@ validateMove( Game, Player, Piece, X, Y ):-
 	TempPiece == '1',
 	assert(needsToPlayQueen( Other )).
 
+% moves where player attempts to use queen or king when it was already played - invalid
+validateMove( Game, Player, Piece, X, Y ):-
+	piecePlayed( Player, Piece ),
+	isQueen( Piece, Player ), !, false.
+
+validateMove( Game, Player, Piece, X, Y ):-
+	isKing( Piece, Player ), !, false.
+
 % regular move
 validateMove( Game, Player, Piece, X, Y ):-
-	write('Regular move'), nl,
-	\+(piecePlayed( Player, Piece )),
-	write('Passed'), nl,
+	\+(piecePlayedTwice( Player, Piece )),
+
 	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
 
@@ -62,3 +70,4 @@ validateMove( Game, Player, Piece, X, Y ):-
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, TempPiece ),
 	TempPiece == '1'.
+

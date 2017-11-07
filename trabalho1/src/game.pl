@@ -5,12 +5,18 @@
 :-include('utils.pl').
 
 :-dynamic piecePlayed/2.
+:-dynamic piecePlayedTwice/2.
 :-dynamic needsToPlayQueen/1.
+:-dynamic gameOver/1.
 
 % high level play match function %
 playXadrersi:-
 	initGame( Game ), !,
 	playGame( Game ).
+
+playGame( Game ):-
+	gameOver( cenas ),
+	write(' Game over!!!'), nl.
 
 playGame( Game ):-
 	% get stuff from game class
@@ -34,7 +40,6 @@ playGame( Game ):-
 	switchPlayer( GameTemp3, NewGame ),
 
 	playGame( NewGame ).
-
 
 %%%%%%%%%%%%%%%%
 % Game "class" %
@@ -72,11 +77,18 @@ getTurnIndex( Game, N ):-
 
 incTurnIndex( Game, NewGame ):-
 	getTurnIndex( Game, N ),
-	replace( Game, 2, N+1, NewGame ).
+	N1 is N+1,
+	replace( Game, 2, N1, NewGame ).
+
+% case where piece was already played once - used for rooks, bishops and knights
+updateMadeMoves( Player, Piece ):-
+	piecePlayed( Player, Piece ),
+	assert(piecePlayedTwice( Player, Piece )).
 	
+% case where piece can only be played once - kings and queens
 updateMadeMoves( Player, Piece ):-
 	assert(piecePlayed( Player, Piece )).
-	
+
 switchPlayer( Game, NewGame ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
 	otherPlayer( CurrentPlayer, NewPlayer ),
@@ -84,13 +96,13 @@ switchPlayer( Game, NewGame ):-
 
 displayTurnInfo( Game ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
-	CurrentPlayer == white,
-	nl, write('Current player is white.'), nl.
+	getTurnIndex( Game, N ),
+	nl, write('Player: '), displayPlayer( CurrentPlayer ), nl,
+	write('Turn N: '), write(N), nl,
+	ifte( needsToPlayQueen( CurrentPlayer ), (write('NOTE: You must play Queen.'), nl), write('') ).
 
-displayTurnInfo( Game ):-
-	getCurrentPlayer( Game, CurrentPlayer ),
-	CurrentPlayer == black,
-	nl, write('Current player is black.'), nl.
+displayPlayer(white):- write('white').
+displayPlayer(black):- write('black').
 
 otherPlayer(white, black).
 otherPlayer(black, white).
