@@ -1,9 +1,11 @@
 :-include('board.pl').
 :-include('moveValidation.pl').
+:-include('attackedBoard.pl').
 :-include('userInput.pl').
 :-include('utils.pl').
 
 :-dynamic piecePlayed/2.
+:-dynamic needsToPlayQueen/1.
 
 % high level play match function %
 playXadrersi:-
@@ -21,7 +23,7 @@ playGame( Game ):-
 	readMoveFromUser( Player, Piece, X, Y ),
 	validateMove( Game, Player, Piece, X, Y ),
 
-	% make and udpdate moves
+	% make and update moves
 	makeMove( Board, Piece, X, Y, NextBoard ),
 	updateMadeMoves( Player, Piece ),
 
@@ -33,35 +35,6 @@ playGame( Game ):-
 
 	playGame( NewGame ).
 
-% first move, white king needs to be played
-validateMove( Game, Player, Piece, X, Y ):-
-	getTurnIndex( Game, N ),
-	N == 0,
-	getBoard( Game, Board ),
-	isEmpty( Board, X, Y ), 
-	isKing( Piece, Player ).
-
-% regular move
-validateMove( Game, Player, Piece, X, Y ):-
-	\+(piecePlayed( Player, Piece )),
-	getBoard( Game, Board ),	
-	isEmpty( Board, X, Y ),
-
-	otherPlayer( Player, Other ),
-	getAttackedBoard( Game, Other, AttackedBoard ),
-	getPieceAt( AttackedBoard, X, Y, TempPiece ),
-	TempPiece == '1'.
-
-% final move
-validateMove( Game, 7, Player, Piece, X, Y ):-
-	\+(piecePlayed( Player, Piece )),
-	getBoard( Game, Board ),
-
-	isEmpty( Board, X, Y),
-	isKing( Piece, Player ).
-
-updateMadeMoves( Player, Piece ):-
-	assert(piecePlayed( Player, Piece )).
 
 %%%%%%%%%%%%%%%%
 % Game "class" %
@@ -100,6 +73,9 @@ getTurnIndex( Game, N ):-
 incTurnIndex( Game, NewGame ):-
 	getTurnIndex( Game, N ),
 	replace( Game, 2, N+1, NewGame ).
+	
+updateMadeMoves( Player, Piece ):-
+	assert(piecePlayed( Player, Piece )).
 	
 switchPlayer( Game, NewGame ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
