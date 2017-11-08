@@ -4,17 +4,14 @@
 :-include('userInput.pl').
 :-include('ai.pl').
 :-include('utils.pl').
+:-include('main.pl').
 :-include('emojis.pl').
 
+:-dynamic typeOfGame/1.
 :-dynamic piecePlayed/2.
 :-dynamic piecePlayedTwice/2.
 :-dynamic needsToPlayQueen/1.
 :-dynamic gameOver/1.
-
-% high level play match function %
-playXadrersi:-
-	initGame( Game ), !,
-	playGame( Game ).
 
 playGame( Game ):-
 	gameOver( currentGame ),
@@ -34,7 +31,7 @@ playGame( Game ):-
 	displayBoard( Board ),
 
 	% read and validate move
-	readMoveFromUser( Player, Piece, X, Y ),
+	getNextMove( Game, Player, Piece, X, Y ),
 	validateMove( Game, Player, Piece, X, Y ),
 
 	% make and update moves
@@ -49,15 +46,34 @@ playGame( Game ):-
 
 	playGame( NewGame ).
 
+getNextMove( Game, Player, Piece, X, Y ):-
+	typeOfGame( singlePlayer ),
+	getAIPlayer( Game, AIPlayer ),
+	AIPlayer == Player,
+	getBestMove( Game, Player, Piece, X, Y ),
+	nl, write('AI has its move, press SPACE to play'), nl.
+
+getNextMove( Game, Player, Piece, X, Y ):-
+	typeOfGame( singlePlayer ),
+	getAIPlayer( Game, AIPlayer ),
+	Player \= AIPlayer,
+	readMoveFromUser( Player, Piece, X, Y ).
+
 %%%%%%%%%%%%%%%%
 % Game "class" %
 %%%%%%%%%%%%%%%%
 
-initGame( Game ):-
+initMultiplayerGame( Game ):-
 	initialBoard( Board ),
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
 	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack ].
+
+initSingleplayerGame( Game, AIPlayer ):-
+	initialBoard( Board ),
+	initialBoard( AttackedBoardWhite ),
+	initialBoard( AttackedBoardBlack ),
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer ].
 
 getBoard( Game, Board ):-
 	elementAt(0, Game, Board).
@@ -87,6 +103,9 @@ incTurnIndex( Game, NewGame ):-
 	getTurnIndex( Game, N ),
 	N1 is N+1,
 	replace( Game, 2, N1, NewGame ).
+
+getAIPlayer( Game, AIPlayer ):-
+	elementAt(5, Game, AIPlayer ).
 
 % case where piece was already played once - used for rooks, bishops and knights
 updateMadeMoves( Player, Piece ):-
@@ -124,7 +143,7 @@ displayWinner( White, Black ):-
 	emoji(trophy), nl,
 	emoji(trophy),
 	write(' Black Wins '), 
-	emoji( trophy), nl,
+	emoji(trophy), nl,
 	emoji(trophy),
 	emoji(trophy),
 	emoji(trophy),

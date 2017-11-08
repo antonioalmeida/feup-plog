@@ -30,3 +30,7 @@ isEmptyAux( [ Row | RestOfBoard ], N, X, Y ):-
 isWithinLimits(N):-
 	N >= 0,
 	N < 8.
+
+waitForSpace:-
+	read(_).
+
