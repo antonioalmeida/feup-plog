@@ -22,7 +22,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 	isEmpty( Board, X, Y),
 	isKing( Piece, Player ),
-	assert( gameOver( cenas )).
+	assert( gameOver( currentGame )).
 
 % move where player is forced to use queen
 validateMove( Game, Player, Piece, X, Y ):-

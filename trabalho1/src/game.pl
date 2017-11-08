@@ -2,7 +2,9 @@
 :-include('moveValidation.pl').
 :-include('attackedBoard.pl').
 :-include('userInput.pl').
+:-include('ai.pl').
 :-include('utils.pl').
+:-include('emojis.pl').
 
 :-dynamic piecePlayed/2.
 :-dynamic piecePlayedTwice/2.
@@ -16,7 +18,13 @@ playXadrersi:-
 
 playGame( Game ):-
 	gameOver( currentGame ),
-	write(' Game over!!!'), nl.
+	getAttackedBoard( Game, white, AttackedBoardWhite ),
+	getAttackedBoard( Game, black, AttackedBoardBlack ),
+
+	evaluateBoard( AttackedBoardWhite, WhiteScore ),
+	evaluateBoard( AttackedBoardBlack, BlackScore ),
+
+	displayWinner( WhiteScore, BlackScore ).
 
 playGame( Game ):-
 	% get stuff from game class
@@ -101,9 +109,32 @@ displayTurnInfo( Game ):-
 	write('Turn N: '), write(N), nl,
 	ifte( needsToPlayQueen( CurrentPlayer ), (write('NOTE: You must play Queen.'), nl), write('') ).
 
+displayWinner( White, Black ):-
+	White > Black,
+	write('!!!!!!!!!!!!'),
+	write('!White Wins!'),
+	write('!!!!!!!!!!!!').
+
+displayWinner( White, Black ):-
+	emoji(trophy), 
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy), nl,
+	emoji(trophy),
+	write(' Black Wins '), 
+	emoji( trophy), nl,
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy),
+	emoji(trophy).
+
 displayPlayer(white):- write('white').
 displayPlayer(black):- write('black').
 
 otherPlayer(white, black).
 otherPlayer(black, white).
-	
+

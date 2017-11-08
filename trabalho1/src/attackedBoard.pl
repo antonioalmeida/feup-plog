@@ -45,6 +45,7 @@ updateAttackedBoardAux( Player, _, AttackedBoard, _, 8, NewAttackedBoard ):-
 % King
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKing( Piece, Player ),
+    !,
     Y1 is Y-1,
     Y2 is Y+1,
     X1 is X-1,
@@ -62,6 +63,7 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 % Knight
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKnight( Piece, Player ),
+    !,
     Yplus2 is Y+2,
     Yminus2 is Y-2,
     Yplus1 is Y+1,
@@ -78,6 +80,7 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 % Rook
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isRook( Piece, Player ),
+    !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),
@@ -86,6 +89,7 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 % Bishop
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isBishop( Piece, Player ),
+    !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 1, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, 1, -1, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, -1, 1, AttackedPositions3 ),
@@ -94,6 +98,7 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 % Queen
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isQueen( Piece, Player ),
+    !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, X, Y, -1, 0, AttackedPositions2 ),
     pieceAttackedPositions( Board, AttackedPositions2, X, Y, 0, 1, AttackedPositions3 ),

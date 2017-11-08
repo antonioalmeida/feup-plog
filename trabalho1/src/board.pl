@@ -102,7 +102,7 @@ evaluateBoardAux( [ CurrentLine | RestOfBoard ], CurrentScore, Score ):-
 
 evaluateBoardAux( [], Score, Score ).
 
-evaluateBoardLine( [ 'A' | RestOfLine ], CurrentScore, Score):-
+evaluateBoardLine( [ '1' | RestOfLine ], CurrentScore, Score):-
 	Temp is CurrentScore+1,
 	evaluateBoardLine( RestOfLine, Temp, Score ).
 
