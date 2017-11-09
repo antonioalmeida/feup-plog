@@ -8,8 +8,8 @@ start:-
 
 
 startSinglePlayer:-
-	asserta(typeOfGame(singlePlayer)),
-	initSingleplayerGame( Game, white ), !,
+	asserta(typeOfGame(multiPlayer)),
+	initMultiplayerGame( Game ),
 	playGame( Game ).
 
 

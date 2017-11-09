@@ -36,13 +36,13 @@ playGame( Game ):-
 
 	% make and update moves
 	makeMove( Board, Piece, X, Y, NextBoard ),
-	updateMadeMoves( Player, Piece ),
+	updateMadeMoves( Game, Player, Piece, GameTemp ),
 
 	% prepare for next turn
-	setBoard( Game, NextBoard, GameTemp ),
-	updateAttackedBoard( GameTemp, GameTemp2 ),
-	incTurnIndex( GameTemp2, GameTemp3 ),
-	switchPlayer( GameTemp3, NewGame ),
+	setBoard( GameTemp, NextBoard, GameTemp2 ),
+	updateAttackedBoard( GameTemp2, GameTemp3 ),
+	incTurnIndex( GameTemp3, GameTemp4 ),
+	switchPlayer( GameTemp4, NewGame ),
 
 	playGame( NewGame ).
 
@@ -55,9 +55,7 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	nl, write('AI has its move, press SPACE to play'), nl.
 
 getNextMove( Game, Player, Piece, X, Y ):-
-	typeOfGame( singlePlayer ),
-	getAIPlayer( Game, AIPlayer ),
-	Player \= AIPlayer,
+	typeOfGame( multiPlayer ),
 	readMoveFromUser( Player, Piece, X, Y ).
 
 %%%%%%%%%%%%%%%%
@@ -68,13 +66,24 @@ initMultiplayerGame( Game ):-
 	initialBoard( Board ),
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
-	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [] ].
+
+	% Game Object %
+	% 0 - game board %		
+	% 1 - current player %		
+	% 2 - turn counter %		
+	% 3 - board with white player's attacked positions %		
+	% 4 - board with black player's attacked positions %		
+	% 5 - if singleplayer, color which AI is playing for %		
+	% 6 - list with the pieces played %		
+	% 7 - boolean, true if white player needs to play queen %
+	% 8 - boolean, true if black player needs to play queen %
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false ].
 
 initSingleplayerGame( Game, AIPlayer ):-
 	initialBoard( Board ),
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
-	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer ].
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false ].
 
 getBoard( Game, Board ):-
 	elementAt(0, Game, Board).
@@ -106,12 +115,12 @@ incTurnIndex( Game, NewGame ):-
 	replace( Game, 2, N1, NewGame ).
 
 getPlayedPieces( Game, PlayedPieces ):-
-	elementAt( 5, PlayedPieces ).
+	elementAt( 6, Game, PlayedPieces ).
 
-addPlayedPiece( Game, Piece, X, Y, NewGame ):-
+addPlayedPiece( Game, Player, Piece, NewGame ):-
 	getPlayedPieces( Game, PlayedPieces ),
-	append( PlayedPieces, [ Player-Piece ], NewPlayedPieces ),
-	replace( Game, 5, NewPlayedPieces, NewGame ).
+	append( [Player-Piece], PlayedPieces, NewPlayedPieces ),
+	replace( Game, 6, NewPlayedPieces, NewGame ).
 
 piecePlayed( Game, Player, Piece ):-
 	getPlayedPieces( Game, PlayedPieces ),
@@ -122,17 +131,43 @@ piecePlayedTwice( Game, Player, Piece ):-
 	countOccurences( PlayedPieces, Played-Piece, N ),
 	N == 2.
 
+setNeedsToPlayQueen( Game, white, Value, NewGame ):-
+	replace( Game, 7, Value, NewGame ).
+
+setNeedsToPlayQueen( Game, black, Value, NewGame ):-
+	replace( Game, 8, Value, NewGame ).
+
+needsToPlayQueen( Game, white ):-
+	elementAt( 7, Game,  Value ),
+	Value == true.
+
+needsToPlayQueen( Game, black ):-
+	elementAt( 8, Game, Value ),
+	Value == true.
+
 getAIPlayer( Game, AIPlayer ):-
 	elementAt(5, Game, AIPlayer ).
-
-% case where piece was already played once - used for rooks, bishops and knights
-updateMadeMoves( Player, Piece ):-
-	piecePlayed( Player, Piece ),
-	assert(piecePlayedTwice( Player, Piece )).
 	
-% case where piece can only be played once - kings and queens
-updateMadeMoves( Player, Piece ):-
-	assert(piecePlayed( Player, Piece )).
+% case where player had to play queen and does so
+updateMadeMoves( Game, Player, Piece, NewGame ):-
+	isQueen( Piece, Player ),	
+	needsToPlayQueen( Game, Player ),
+	setNeedsToPlayQueen( Game, Player, false, TempGame ),
+	otherPlayer( Player, Other ),
+	setNeedsToPlayQueen( TempGame, Other , false, TempGame2 ),
+	addPlayedPiece( TempGame2, Player, Piece, NewGame ).
+
+% case where a player plays queen for the first time
+updateMadeMoves( Game, Player, Piece, NewGame ):-
+	isQueen( Piece, Player ),
+	otherPlayer( Player, Other ),
+	\+needsToPlayQueen( Game, Other ),
+	setNeedsToPlayQueen( Game, Other, true, TempGame ),
+	addPlayedPiece( TempGame, Player, Piece, NewGame ).
+
+% regular case
+updateMadeMoves( Game, Player, Piece, NewGame ):-
+	addPlayedPiece( Game, Player, Piece, NewGame ).
 
 switchPlayer( Game, NewGame ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
@@ -143,8 +178,7 @@ displayTurnInfo( Game ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
 	getTurnIndex( Game, N ),
 	nl, write('Player: '), displayPlayer( CurrentPlayer ), nl,
-	write('Turn N: '), write(N), nl,
-	ifte( needsToPlayQueen( CurrentPlayer ), (write('NOTE: You must play Queen.'), nl), write('') ).
+	write('Turn N: '), write(N), nl.
 
 displayWinner( White, Black ):-
 	White > Black,

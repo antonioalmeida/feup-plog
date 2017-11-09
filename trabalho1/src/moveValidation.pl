@@ -17,7 +17,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	getTurnIndex( Game, N ),
 	N == 15	,
 	!, 
-	\+(piecePlayed( Player, Piece )),
+	\+(piecePlayed( Game, Player, Piece )),
 	getBoard( Game, Board ),
 
 	isEmpty( Board, X, Y),
@@ -26,7 +26,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 % move where player is forced to use queen
 validateMove( Game, Player, Piece, X, Y ):-
-	needsToPlayQueen( Player ),
+	needsToPlayQueen( Game, Player ),
 	!, 
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),	
@@ -35,12 +35,11 @@ validateMove( Game, Player, Piece, X, Y ):-
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, TempPiece ),
-	TempPiece == '1',
-	retract(needsToPlayQueen( Player )).
+	TempPiece == '1'.
 
 % move where first player uses queen
 validateMove( Game, Player, Piece, X, Y ):-
-	\+(piecePlayed( Player, Piece )),
+	\+(piecePlayed( Game, Player, Piece )),
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
@@ -48,20 +47,20 @@ validateMove( Game, Player, Piece, X, Y ):-
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, TempPiece ),
-	TempPiece == '1',
-	assert(needsToPlayQueen( Other )).
+	TempPiece == '1'.
 
 % moves where player attempts to use queen or king when it was already played - invalid
 validateMove( Game, Player, Piece, X, Y ):-
-	piecePlayed( Player, Piece ),
-	isQueen( Piece, Player ), !, false.
+	piecePlayed( Game, Player, Piece ),
+	isQueen( Piece, Player ), 
+	!, false.
 
 validateMove( Game, Player, Piece, X, Y ):-
 	isKing( Piece, Player ), !, false.
 
 % regular move
 validateMove( Game, Player, Piece, X, Y ):-
-	\+(piecePlayedTwice( Player, Piece )),
+	\+(piecePlayedTwice( Game, Player, Piece )),
 
 	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
