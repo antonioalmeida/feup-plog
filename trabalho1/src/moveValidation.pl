@@ -7,6 +7,7 @@
 validateMove( Game, Player, Piece, X, Y ):-
 	getTurnIndex( Game, N ),
 	N == 0,
+	!,
 	getBoard( Game, Board ),
 	isEmpty( Board, X, Y ), 
 	isKing( Piece, Player ).
@@ -15,6 +16,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 validateMove( Game, Player, Piece, X, Y ):-
 	getTurnIndex( Game, N ),
 	N == 15	,
+	!,
 	\+piecePlayed( Game, Player, Piece ),
 	getBoard( Game, Board ),
 
@@ -25,6 +27,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 % move where player is forced to use queen
 validateMove( Game, Player, Piece, X, Y ):-
 	needsToPlayQueen( Game, Player ),
+	!,
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),	
 	isEmpty( Board, X, Y ),
@@ -32,7 +35,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, Value ),
-	Value \= 0.
+	Value \== 0.
 
 % move where first player uses queen
 validateMove( Game, Player, Piece, X, Y ):-
@@ -44,7 +47,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, Value ),
-	Value \= 0.
+	Value \== 0.
 
 % regular move
 validateMove( Game, Player, Piece, X, Y ):-
@@ -58,4 +61,4 @@ validateMove( Game, Player, Piece, X, Y ):-
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, Value ),
-	Value \= 0.
+	Value \== 0.
