@@ -21,6 +21,8 @@ getPieceDisplay('r', 9820). % rook
 getPieceDisplay('b', 9821). % bishop
 getPieceDisplay('n', 9822). % knight
 
+%remove later
+
 % not tested %
 getPieceAt( Board, X, Y, Piece ):-
 	getPieceAtAux( Board, 0, X, Y, Piece).
@@ -102,8 +104,8 @@ evaluateBoardAux( [ CurrentLine | RestOfBoard ], CurrentScore, Score ):-
 
 evaluateBoardAux( [], Score, Score ).
 
-evaluateBoardLine( [ '1' | RestOfLine ], CurrentScore, Score):-
-	Temp is CurrentScore+1,
+evaluateBoardLine( [ N | RestOfLine ], CurrentScore, Score):-
+	Temp is CurrentScore + N,
 	evaluateBoardLine( RestOfLine, Temp, Score ).
 
 evaluateBoardLine( [ 0 | RestOfLine ], CurrentScore, Score ):-

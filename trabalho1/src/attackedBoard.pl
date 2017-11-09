@@ -12,9 +12,9 @@ updateAttackedBoard( Game, NewGame ):-
     setAttackedBoard( Game, white, NewAttackedBoardWhite, TempGame ),
     setAttackedBoard( TempGame, black, NewAttackedBoardBlack, NewGame ),
     nl, write('Attacked White'), nl,
-    displayBoard( NewAttackedBoardWhite ),
-    nl, write('Attacked Black'), nl,
-    displayBoard( NewAttackedBoardBlack ).
+    % displayBoard( NewAttackedBoardWhite ),
+    nl, write('Attacked Black'), nl.
+    % displayBoard( NewAttackedBoardBlack ).
 
 % case where board locations is NOT empty
 updateAttackedBoardAux( Player, Board, AttackedBoard, X, Y, NewAttackedBoard ):-
@@ -51,14 +51,14 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
     X1 is X-1,
     X2 is X+1,
     % not really making a move, simply putting 1 on the given position %
-    makeMove( AttackedPositions, '1', X1, Y, AttackedPositions2), % 1 means attacked position
-    makeMove( AttackedPositions2, '1', X1, Y1, AttackedPositions3), % 1 means attacked position
-    makeMove( AttackedPositions3, '1', X1, Y2, AttackedPositions4), % 1 means attacked position
-    makeMove( AttackedPositions4, '1', X2, Y, AttackedPositions5), % 1 means attacked position
-    makeMove( AttackedPositions5, '1', X2, Y1, AttackedPositions6), % 1 means attacked position
-    makeMove( AttackedPositions6, '1', X2, Y2, AttackedPositions7), % 1 means attacked position
-    makeMove( AttackedPositions7, '1', X, Y1, AttackedPositions8), % 1 means attacked position
-    makeMove( AttackedPositions8, '1', X, Y2, FinalAttackedPositions). % 1 means attacked position
+    incValueAt( AttackedPositions, X1, Y, AttackedPositions2), 
+    incValueAt( AttackedPositions2, X1, Y1, AttackedPositions3), 
+    incValueAt( AttackedPositions3, X1, Y2, AttackedPositions4), 
+    incValueAt( AttackedPositions4, X2, Y, AttackedPositions5), 
+    incValueAt( AttackedPositions5, X2, Y1, AttackedPositions6), 
+    incValueAt( AttackedPositions6, X2, Y2, AttackedPositions7), 
+    incValueAt( AttackedPositions7, X, Y1, AttackedPositions8), 
+    incValueAt( AttackedPositions8, X, Y2, FinalAttackedPositions). 
 
 % Knight
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
@@ -68,14 +68,14 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
     Yminus2 is Y-2,
     Yplus1 is Y+1,
     Yminus1 is Y-1,
-    makeMove( AttackedPositions, '1', X+1, Yplus2, AttackedPositions2 ),
-    makeMove( AttackedPositions2, '1', X+1, Yminus2, AttackedPositions3 ),
-    makeMove( AttackedPositions3, '1', X-1, Yplus2, AttackedPositions4 ),
-    makeMove( AttackedPositions4, '1', X-1, Yminus2, AttackedPositions5 ),
-    makeMove( AttackedPositions5, '1', X+2, Yplus1, AttackedPositions6 ),
-    makeMove( AttackedPositions6, '1', X+2, Yminus1, AttackedPositions7 ),
-    makeMove( AttackedPositions7, '1', X-2, Yplus1, AttackedPositions8 ),
-    makeMove( AttackedPositions8, '1', X-2, Yminus1, FinalAttackedPositions ).
+    incValueAt( AttackedPositions, X+1, Yplus2, AttackedPositions2 ),
+    incValueAt( AttackedPositions2, X+1, Yminus2, AttackedPositions3 ),
+    incValueAt( AttackedPositions3, X-1, Yplus2, AttackedPositions4 ),
+    incValueAt( AttackedPositions4, X-1, Yminus2, AttackedPositions5 ),
+    incValueAt( AttackedPositions5, X+2, Yplus1, AttackedPositions6 ),
+    incValueAt( AttackedPositions6, X+2, Yminus1, AttackedPositions7 ),
+    incValueAt( AttackedPositions7, X-2, Yplus1, AttackedPositions8 ),
+    incValueAt( AttackedPositions8, X-2, Yminus1, FinalAttackedPositions ).
 
 % Rook
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
@@ -132,13 +132,13 @@ pieceAttackedPositions( _, AttackedPositions, _, -1, _, _, FinalAttackedPosition
 pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     \+(isEmpty( Board, CurrX, CurrY )),
-    makeMove( AttackedPositions, '1', CurrX, CurrY, FinalAttackedPositions ).
+    incValueAt( AttackedPositions, CurrX, CurrY, FinalAttackedPositions ).
 
 % case where board location is empty
 pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPositions):-
     CurrX is X+DX, CurrY is Y+DY,
     isEmpty( Board, CurrX, CurrY ),
-    makeMove( AttackedPositions, '1', CurrX, CurrY, AttackedPositions1 ),
+    incValueAt( AttackedPositions, CurrX, CurrY, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
 incValueAt( Board, X, Y, NewBoard ):-
@@ -147,9 +147,13 @@ incValueAt( Board, X, Y, NewBoard ):-
     N is 0,
     incValueAtAux( Board, N, X, Y, [], NewBoard ).
 
+% case where X or Y are off limits
+incValueAt( Board, _, _, Board ).
+
 % reverse temp board
 incValueAtAux( [], _, _, _, TempBoard, NewBoard ):-
     reverse( TempBoard, NewBoard ).
+
 
 % case where N == Y
 incValueAtAux( [ CurrentLine | RestOfBoard ], Y, X, Y, TempBoard, NewBoard ):-

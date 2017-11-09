@@ -31,7 +31,8 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
-	getPieceAt( AttackedBoard, X, Y, '1' ).
+	getPieceAt( AttackedBoard, X, Y, Value ),
+	Value \= 0.
 
 % move where first player uses queen
 validateMove( Game, Player, Piece, X, Y ):-
@@ -42,7 +43,8 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
-	getPieceAt( AttackedBoard, X, Y, '1' ).
+	getPieceAt( AttackedBoard, X, Y, Value ),
+	Value \= 0.
 
 % regular move
 validateMove( Game, Player, Piece, X, Y ):-
@@ -55,4 +57,5 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
-	getPieceAt( AttackedBoard, X, Y, '1' ).
+	getPieceAt( AttackedBoard, X, Y, Value ),
+	Value \= 0.
