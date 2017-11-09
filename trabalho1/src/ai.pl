@@ -1,14 +1,23 @@
+playerPiece(white, 'K').
+playerPiece(white, 'Q').
+playerPiece(white, 'R').
+playerPiece(white, 'N').
+playerPiece(white, 'B').
+
+playerPiece(black, 'k').
+playerPiece(black, 'q').
+playerPiece(black, 'r').
+playerPiece(black, 'n').
+playerPiece(black, 'b').
+
 getValidMove( Game, Player, Piece, X, Y ):-
-	getBoard( Game, Board ),
-	!,
-	validateMove(Game, Player, Piece, X, Y ).
+	playerPiece(Player, Piece), %wtf????????????????? it works idc
+	validateMove( Game, Player, Piece, X, Y).
 
 getMoves( Game, Player, MovesList ):-
  	findall(Piece-X-Y, 
- 		getValidMove(Game, Player, Piece, X, Y ), UnsortedMoves ),
- 	sort( UnsortedMoves, MovesList ),
- 	write('Player '), write(Player), nl,
- 	write( MovesList ), length( MovesList, N ), write( 'LENGTH '), write(N),nl .
+ 		getValidMove( Game, Player, Piece, X, Y ), UnsortedMoves ),
+ 	sort( UnsortedMoves, MovesList ).
 
 evaluateAllMoves( Game, Player, MovesWithScore ):-
 	getMoves( Game, Player, MovesList ),

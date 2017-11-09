@@ -6,12 +6,13 @@ start:-
 	write('3 - Exit.'),
 	startSinglePlayer.
 
-
 startSinglePlayer:-
-	asserta(typeOfGame(multiPlayer)),
-	initMultiplayerGame( Game ),
+	asserta(typeOfGame(singlePlayer)),
+	initSingleplayerGame( Game, black ),
 	playGame( Game ).
 
 
 startMultiPlayer:-
-	asserta(typeOfGame(multiPlayer)).
+	asserta(typeOfGame(multiPlayer)),
+	initMultiplayerGame( Game ),
+	playGame( Game ).

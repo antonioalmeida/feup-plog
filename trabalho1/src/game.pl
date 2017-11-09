@@ -50,9 +50,12 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( singlePlayer ),
 	getAIPlayer( Game, AIPlayer ),
 	AIPlayer == Player,
-	write('AI MOVE'), nl,
-	getBestMove( Game, Player, Piece, X, Y ),
-	nl, write('AI has its move, press SPACE to play'), nl.
+	write('AI is thinking...'), nl,
+	getBestMove( Game, Player, Piece, X, Y). 
+
+getNextMove( Game, Player, Piece, X, Y ):-
+	typeOfGame( singlePlayer ),
+	readMoveFromUser( Player, Piece, X, Y ).
 
 getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( multiPlayer ),
