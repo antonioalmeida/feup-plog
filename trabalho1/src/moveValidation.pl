@@ -70,4 +70,3 @@ validateMove( Game, Player, Piece, X, Y ):-
 	getAttackedBoard( Game, Other, AttackedBoard ),
 	getPieceAt( AttackedBoard, X, Y, TempPiece ),
 	TempPiece == '1'.
-

@@ -50,6 +50,7 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( singlePlayer ),
 	getAIPlayer( Game, AIPlayer ),
 	AIPlayer == Player,
+	write('AI MOVE'), nl,
 	getBestMove( Game, Player, Piece, X, Y ),
 	nl, write('AI has its move, press SPACE to play'), nl.
 
@@ -67,7 +68,7 @@ initMultiplayerGame( Game ):-
 	initialBoard( Board ),
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
-	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack ].
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [] ].
 
 initSingleplayerGame( Game, AIPlayer ):-
 	initialBoard( Board ),
@@ -103,6 +104,23 @@ incTurnIndex( Game, NewGame ):-
 	getTurnIndex( Game, N ),
 	N1 is N+1,
 	replace( Game, 2, N1, NewGame ).
+
+getPlayedPieces( Game, PlayedPieces ):-
+	elementAt( 5, PlayedPieces ).
+
+addPlayedPiece( Game, Piece, X, Y, NewGame ):-
+	getPlayedPieces( Game, PlayedPieces ),
+	append( PlayedPieces, [ Player-Piece ], NewPlayedPieces ),
+	replace( Game, 5, NewPlayedPieces, NewGame ).
+
+piecePlayed( Game, Player, Piece ):-
+	getPlayedPieces( Game, PlayedPieces ),
+	member( Player-Piece, PlayedPieces ).
+
+piecePlayedTwice( Game, Player, Piece ):-
+	getPlayedPieces( Game, PlayedPieces ),
+	countOccurences( PlayedPieces, Played-Piece, N ),
+	N == 2.
 
 getAIPlayer( Game, AIPlayer ):-
 	elementAt(5, Game, AIPlayer ).

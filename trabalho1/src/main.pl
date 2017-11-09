@@ -9,7 +9,7 @@ start:-
 
 startSinglePlayer:-
 	asserta(typeOfGame(singlePlayer)),
-	initSingleplayerGame( Game, black ), !,
+	initSingleplayerGame( Game, white ), !,
 	playGame( Game ).
 
 

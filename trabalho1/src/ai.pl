@@ -1,12 +1,14 @@
-getValidMove( Game, Player, Piece, X, Y, NewBoard ):-
+getValidMove( Game, Player, Piece, X, Y ):-
 	getBoard( Game, Board ),
 	!,
 	validateMove(Game, Player, Piece, X, Y ).
 
 getMoves( Game, Player, MovesList ):-
  	findall(Piece-X-Y, 
- 		getValidMove(Game, Player, Piece, X, Y, _), UnsortedMoves ),
- 	sort( UnsortedMoves, MovesList ).
+ 		getValidMove(Game, Player, Piece, X, Y ), UnsortedMoves ),
+ 	sort( UnsortedMoves, MovesList ),
+ 	write('Player '), write(Player), nl,
+ 	write( MovesList ), length( MovesList, N ), write( 'LENGTH '), write(N),nl .
 
 evaluateAllMoves( Game, Player, MovesWithScore ):-
 	getMoves( Game, Player, MovesList ),

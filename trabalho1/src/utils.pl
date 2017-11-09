@@ -31,6 +31,14 @@ isWithinLimits(N):-
 	N >= 0,
 	N < 8.
 
-waitForSpace:-
-	read(_).
+countOccurences( List, Value, N ):-
+	countOccurencesAux( List, Value, 0, N ).
+
+countOccurencesAux( [], _, Result, Result ).
+countOccurencesAux( [ Value | Tail ], Value, N, Result ):-
+	N1 is N+1,
+	countOccurencesAux( Tail, Value, N1, Result ).
+
+countOccurencesAux( [ Head | Tail ], Value, N, Result ):-
+	countOccurencesAux( Tail, Value, N, Result ).
 
