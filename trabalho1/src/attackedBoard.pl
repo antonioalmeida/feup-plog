@@ -141,6 +141,26 @@ pieceAttackedPositions( Board, AttackedPositions, X, Y, DX, DY, FinalAttackedPos
     makeMove( AttackedPositions, '1', CurrX, CurrY, AttackedPositions1 ),
     pieceAttackedPositions( Board, AttackedPositions1, CurrX, CurrY, DX, DY, FinalAttackedPositions ).
 
+incValueAt( Board, X, Y, NewBoard ):-
+    isWithinLimits(X),
+    isWithinLimits(Y),
+    N is 0,
+    incValueAtAux( Board, N, X, Y, [], NewBoard ).
+
+% reverse temp board
+incValueAtAux( [], _, _, _, TempBoard, NewBoard ):-
+    reverse( TempBoard, NewBoard ).
+
+% case where N == Y
+incValueAtAux( [ CurrentLine | RestOfBoard ], Y, X, Y, TempBoard, NewBoard ):-
+    N1 is Y+1,
+    inc( CurrentLine, X, NewLine ),
+    incValueAtAux( RestOfBoard, N1, X, Y, [ NewLine | TempBoard ], NewBoard ).
+
+incValueAtAux( [ CurrentLine | RestOfBoard ], N, X, Y, TempBoard, NewBoard ):-
+    N1 is N+1,
+    incValueAtAux( RestOfBoard, N1, X, Y, [ CurrentLine | TempBoard ], NewBoard ).
+
 isKing('K', white).
 isKing('k', black).
 

@@ -3,7 +3,12 @@
 % replace element at I with X
 replace([_|T], 0, X, [X|T]).
 replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
-replace(L, _, _, L). 
+replace(L, _, _, L).
+
+% replace element at I 
+inc([H|T], 0, R):- H1 is H+1, R = [H1|T].
+inc([H|T], I, [H|R]):- I > -1, NI is I-1, inc(T, NI, R), !.
+inc(L, _, L).
 
 % if then else
 ifte( If, Then, Else):-

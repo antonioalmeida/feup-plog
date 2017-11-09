@@ -111,7 +111,6 @@ evaluateBoardLine( [ 0 | RestOfLine ], CurrentScore, Score ):-
 
 evaluateBoardLine( [], Score, Score ).
 
-
 initialBoard([[0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0],
