@@ -51,7 +51,7 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	getAIPlayer( Game, AIPlayer ),
 	AIPlayer == Player,
 	write('AI is thinking...'), nl,
-	getBestMove( Game, Player, Piece, X, Y). 
+	getAIMove( Game, Player, Piece, X, Y ).
 
 getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( singlePlayer ),
