@@ -11,21 +11,64 @@ getIndexFromRow('g', 6).
 getIndexFromRow('h', 7).
 
 readMoveFromUser(Player, FinalPiece, X, Y):-
-	write('What move would you like to make?'),nl,
-	write('Use the format PieceRowCol. Example : (ke4)'), nl,
-	get_char(PieceChar),
-	get_char(Row),
-	read(Col),
-	get_char(_),
+	write('Please insert the details for your next move'),nl,
+	repeat,
+	write('Use the format PieceRowCol. Example : ke4'), nl,
+	read_line(Move),
+	validInput(Move, PieceChar, Row, Col),
+	%get_char(PieceChar),
+	%get_char(Row),
+	%read(Col),
 	getPiece(Player, PieceChar, FinalPiece),
 	getIndexFromRow(Row, X),
 	Y is 8-Col,
 	write(FinalPiece-Row-Col).
 
+validInput(Move, PieceChar, Row, Col):-
+	length(Move, 3),
+	elementAt(0, Move, Piece),
+	write(Piece), nl,
+	char_code(PieceChar, Piece),
+	validPiece(PieceChar),
+	write('piece passed'),nl,
+	elementAt(1, Move, RowTemp),
+	char_code(RowTemp2, RowTemp),
+	toLowercase(RowTemp2, Row),
+	validRow(Row),
+	write('row passed'), nl,
+	elementAt(2, Move, ColTemp),
+	Col is ColTemp - 48, %48 is ASCII of 0
+	Col >= 0,
+	Col < 8,
+	write('col passed'), nl.
+
+validInput(_, PieceChar, Row, Col):-
+	write('Invalid move format. Please try again.'), nl, fail.
+
+validRow('a').
+validRow('b').
+validRow('c').
+validRow('d').
+validRow('e').
+validRow('f').
+validRow('g').
+validRow('h').
+
+validPiece('k').
+validPiece('K').
+validPiece('q').
+validPiece('Q').
+validPiece('b').
+validPiece('B').
+validPiece('r').
+validPiece('R').
+validPiece('n').
+validPiece('N').
+
 getPiece(black, PieceChar, FinalPiece):-
 	toLowercase( PieceChar, FinalPiece).
 
-getPiece(white, PieceChar, FinalPiece):-	
+getPiece(white, PieceChar, FinalPiece):-
 	toUppercase(PieceChar, FinalPiece).
 
 toUppercase(L, U):-
@@ -45,4 +88,3 @@ toLowercase(U, L):-
 	atom_codes(L, [ NX ] ).
 
 toLowercase(U, U).
-
