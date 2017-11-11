@@ -12,6 +12,7 @@
 :-dynamic piecePlayedTwice/2.
 :-dynamic needsToPlayQueen/1.
 :-dynamic gameOver/1.
+:-dynamic connected/2.
 
 playGame( Game ):-
 	gameOver( currentGame ),

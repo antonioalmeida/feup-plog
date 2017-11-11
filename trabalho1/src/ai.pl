@@ -43,8 +43,11 @@ getBestMoveWithScore( Game, Player, Score, Piece, X, Y):-
 
 evaluateAllMoves( Game, Player, MovesWithScore ):-
 	getAllMoves( Game, Player, MovesList ), !,
+	write('getAllMoves'), nl,
 	getBoard( Game, Board ), !,
+	write('getBoard'), nl,
 	evaluateAllMovesAux( MovesList, Board, Player, [], UnsortedMoves ), !,
+	write('evaluateAllMovesAux'), nl,
 	sort( UnsortedMoves, MovesWithScore ).
 
 evaluateAllMovesAux( [], _, _, ScoresList, ScoresList).
@@ -59,14 +62,25 @@ evaluateMove(Player, Piece, X, Y, Board, Score):-
 	!,
 	evaluateBoard( AttackedBoard, Score ).
 
+evaluateMagicShit( MovesList, BestMove ):-
+	sort( MovesList, SortedMoves ),
+	last( MovesList, _-LastPiece-LastX-LastY ),
+	write( 'LAST : ' ), write(LastPiece-LastX-LastY), nl,
+	!,
+	connected( TempPiece-TempX-TempY, LastPiece-LastX-LastY ),
+	write( 'TEMP : ' ), write(TempPiece-TempX-TempY), nl,
+	connected( Piece-X-Y, TempPiece-TempX-TempY ),
+	write( 'BEST : ' ), write(Piece-X-Y), nl,
+	BestMove = Piece-X-Y.
 
-magicShit( Game, Player, MagicMoves ):-
+magicShit( Game, Player, BestMove ):-
 	getAllMoves( Game, Player, MovesList ),
 	getOtherBestMoves( Game, Player, MovesList, [], OtherMoves ),
 	write('OTHER MOVES '),
 	write(OtherMoves),
 	otherPlayer( Player, Other ),
-	magicShit2( OtherMoves, Other, [], MagicMoves ).
+	magicShit2( OtherMoves, Other, [], MagicMoves ),
+	evaluateMagicShit( MagicMoves, BestMove ).
 
 magicShit2( [], _, NewMoves, NewMoves).
 
@@ -74,7 +88,6 @@ magicShit2( [ Piece-X-Y-Game | RestOfMoves ], Player, TempMoves, NewMoves ):-
 	
 	getBoard( Game, Board ),
 
-	displayBoard(Board),
 
 	% simulate game progression
 	makeMove( Board, Piece, X, Y, NextBoard ),	
@@ -92,9 +105,14 @@ magicShit2( [ Piece-X-Y-Game | RestOfMoves ], Player, TempMoves, NewMoves ):-
 	switchPlayer( GameTemp4, NewGame ),
 	write('switchPlayer'), nl,
 	otherPlayer( Player, Other ),
-	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
+	!,
+	getBestMoveWithScore( NewGame, Other, OtherScore, OtherPiece, OtherX, OtherY ),
+	write('getBestMoveWithScore'), nl,
 
-	magicShit2( RestOfMoves, Player, [ OtherPiece-OtherX-OtherY | TempMoves], NewMoves ).
+	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
+	write( 'ASSERTED : '), write( Piece-X-Y), write( 'WITH '), write( OtherPiece-OtherX-OtherY), nl,
+
+	magicShit2( RestOfMoves, Player, [ OtherScore-OtherPiece-OtherX-OtherY | TempMoves], NewMoves ).
 
 getOtherBestMoves( _, _, [], OthersMoves, OthersMoves).
 
@@ -123,6 +141,8 @@ getOtherBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, Othe
 	otherPlayer( Player, Other ),
 	write('Other player '), nl,
 	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
+	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
+	write( 'ASSERTED : '), write( Piece-X-Y), write( 'WITH '), write( OtherPiece-OtherX-OtherY), nl,
 	write('Get best move '), nl,
 	getOtherBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
 
