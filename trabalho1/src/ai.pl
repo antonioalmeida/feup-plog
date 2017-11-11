@@ -23,13 +23,13 @@ getAllMoves( Game, Player, MovesList ):-
 
  getAIMove( Game, Player, Piece, X, Y ):-
  	difficulty( easy ),
- 	getRandomMove( Game, Player, Piece, X, Y ).
+ 	easyGetMove( Game, Player, Piece, X, Y ).
 
  getAIMove( Game, Player, Piece, X, Y ):-
  	difficulty( medium ),
  	getBestMove( Game, Player, Piece, X, Y ).
 
-getRandomMove( Game, Player, Piece, X, Y ):-
+easyGetMove( Game, Player, Piece, X, Y ):-
 	getAllMoves( Game, Player, MovesList ),
 	random_member( Piece-X-Y, MovesList ).
 
@@ -43,11 +43,8 @@ getBestMoveWithScore( Game, Player, Score, Piece, X, Y):-
 
 evaluateAllMoves( Game, Player, MovesWithScore ):-
 	getAllMoves( Game, Player, MovesList ), !,
-	write('getAllMoves'), nl,
 	getBoard( Game, Board ), !,
-	write('getBoard'), nl,
 	evaluateAllMovesAux( MovesList, Board, Player, [], UnsortedMoves ), !,
-	write('evaluateAllMovesAux'), nl,
 	sort( UnsortedMoves, MovesWithScore ).
 
 evaluateAllMovesAux( [], _, _, ScoresList, ScoresList).
@@ -62,87 +59,49 @@ evaluateMove(Player, Piece, X, Y, Board, Score):-
 	!,
 	evaluateBoard( AttackedBoard, Score ).
 
-evaluateMagicShit( MovesList, BestMove ):-
+evaluatehardGetMove( MovesList, BestMove ):-
 	sort( MovesList, SortedMoves ),
 	last( MovesList, _-LastPiece-LastX-LastY ),
-	write( 'LAST : ' ), write(LastPiece-LastX-LastY), nl,
 	!,
 	connected( TempPiece-TempX-TempY, LastPiece-LastX-LastY ),
-	write( 'TEMP : ' ), write(TempPiece-TempX-TempY), nl,
 	connected( Piece-X-Y, TempPiece-TempX-TempY ),
-	write( 'BEST : ' ), write(Piece-X-Y), nl,
 	BestMove = Piece-X-Y.
 
-magicShit( Game, Player, BestMove ):-
+hardGetMove( Game, Player, BestMove ):-
 	getAllMoves( Game, Player, MovesList ),
-	getOtherBestMoves( Game, Player, MovesList, [], OtherMoves ),
-	write('OTHER MOVES '),
-	write(OtherMoves),
+	getOpponentBestMoves( Game, Player, MovesList, [], OtherMoves ),
 	otherPlayer( Player, Other ),
-	magicShit2( OtherMoves, Other, [], MagicMoves ),
-	evaluateMagicShit( MagicMoves, BestMove ).
+	getNextBestMove( OtherMoves, Other, [], MagicMoves ),
+	evaluatehardGetMove( MagicMoves, BestMove ).
 
-magicShit2( [], _, NewMoves, NewMoves).
+getNextBestMove( [], _, NewMoves, NewMoves).
 
-magicShit2( [ Piece-X-Y-Game | RestOfMoves ], Player, TempMoves, NewMoves ):-
-	
-	getBoard( Game, Board ),
-
-
-	% simulate game progression
-	makeMove( Board, Piece, X, Y, NextBoard ),	
-	write('make Move'), nl,
-	updateMadeMoves( Game, Player, Piece, GameTemp ),
-	write('update Move'), nl,
-	setBoard( GameTemp, NextBoard, GameTemp2 ),
-	write('set Board'), nl,
-	!,
-	displayBoard(NextBoard),
-	updateAttackedBoard( GameTemp2, GameTemp3 ),
-	write('update Attacked'), nl,
-	incTurnIndex( GameTemp3, GameTemp4 ),
-	write('incTurnIndex'), nl,
-	switchPlayer( GameTemp4, NewGame ),
-	write('switchPlayer'), nl,
+getNextBestMove( [ Piece-X-Y-Game | RestOfMoves ], Player, TempMoves, NewMoves ):-
+	simulateGameProgression( Game, Player, Piece, X, Y, NewGame ),
 	otherPlayer( Player, Other ),
 	!,
 	getBestMoveWithScore( NewGame, Other, OtherScore, OtherPiece, OtherX, OtherY ),
-	write('getBestMoveWithScore'), nl,
 
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
-	write( 'ASSERTED : '), write( Piece-X-Y), write( 'WITH '), write( OtherPiece-OtherX-OtherY), nl,
 
-	magicShit2( RestOfMoves, Player, [ OtherScore-OtherPiece-OtherX-OtherY | TempMoves], NewMoves ).
+	getNextBestMove( RestOfMoves, Player, [ OtherScore-OtherPiece-OtherX-OtherY | TempMoves], NewMoves ).
 
-getOtherBestMoves( _, _, [], OthersMoves, OthersMoves).
+getOpponentBestMoves( _, _, [], OthersMoves, OthersMoves).
 
-getOtherBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, OthersMoves ):-
-	write('Current : '), write(Player-Piece-X-Y), nl,
-	getBoard( Game, Board ),
-	displayBoard(Board),
-
-	% simulate game progression
-	validateMove( Game, Player, Piece, X, Y ),
-	makeMove( Board, Piece, X, Y, NextBoard ),	
-	write('make Move'), nl,
-	updateMadeMoves( Game, Player, Piece, GameTemp ),
-	write('update Move'), nl,
-	setBoard( GameTemp, NextBoard, GameTemp2 ),
-	write('set Board'), nl,
-	!,
-	displayBoard(NextBoard),
-	updateAttackedBoard( GameTemp2, GameTemp3 ),
-	write('update Attacked'), nl,
-	incTurnIndex( GameTemp3, GameTemp4 ),
-	write('incTurnIndex'), nl,
-	switchPlayer( GameTemp4, NewGame ),
-	write('switchPlayer'), nl,
-
+getOpponentBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, OthersMoves ):-
+	simulateGameProgression( Game, Player, Piece, X, Y, NewGame ),
 	otherPlayer( Player, Other ),
-	write('Other player '), nl,
 	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
-	write( 'ASSERTED : '), write( Piece-X-Y), write( 'WITH '), write( OtherPiece-OtherX-OtherY), nl,
-	write('Get best move '), nl,
-	getOtherBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
+	getOpponentBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
+
+simulateGameProgression( Game, Player, Piece, X, Y, NewGame ):-
+	getBoard( Game, Board ),
+	makeMove( Board, Piece, X, Y, NextBoard ),	
+	updateMadeMoves( Game, Player, Piece, GameTemp ),
+	setBoard( GameTemp, NextBoard, GameTemp2 ),
+	!,
+	updateAttackedBoard( GameTemp2, GameTemp3 ),
+	incTurnIndex( GameTemp3, GameTemp4 ),
+	switchPlayer( GameTemp4, NewGame ).
 

@@ -10,11 +10,7 @@ updateAttackedBoard( Game, NewGame ):-
     updateAttackedBoardAux( white, Board, AttackedBoard, X, Y, NewAttackedBoardWhite ),
     updateAttackedBoardAux( black, Board, AttackedBoard, X, Y, NewAttackedBoardBlack ),
     setAttackedBoard( Game, white, NewAttackedBoardWhite, TempGame ),
-    setAttackedBoard( TempGame, black, NewAttackedBoardBlack, NewGame ),
-    nl, write('Attacked White'), nl,
-    % displayBoard( NewAttackedBoardWhite ),
-    nl, write('Attacked Black'), nl.
-    % displayBoard( NewAttackedBoardBlack ).
+    setAttackedBoard( TempGame, black, NewAttackedBoardBlack, NewGame ).
 
 % case where board locations is NOT empty
 updateAttackedBoardAux( Player, Board, AttackedBoard, X, Y, NewAttackedBoard ):-
