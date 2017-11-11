@@ -130,7 +130,96 @@ Existe, por isso, a possibilidade de empate.
 \section{Lógica do Jogo}
 
 \subsection{Representação do Estado do Jogo}
-(To be completed)
+\textit{TODO: Em vez disto, falar da 'classe' Game e deixar apenas do que está atualmente os tabuleiros de estado de jogo (com uma frase de introdução a dizer que as peças são guardadas pelos carateres/códigos ASCII)?}
+De forma a sistematizar uma relação entre a representação interna das pecas de jogo com a visualização das mesmas na consola, foi definida uma convenção. Os caracteres internamente baseiam-se na nomenclatura em inglês das peças de Xadrez, distinguindo-se as cores das mesmas através da utilização de maiúsculas ou minúsculas. Na prática, são guardados os códigos ASCII destes carateres.
+Para representar no ecrã são utilizados os códigos Unicode existentes para as peças de Xadrez, como observável na subsecção seguinte.
+
+\begin{small}
+\minipage{0.3\textwidth}
+
+\large Peças Brancas
+\begin{center}
+  \begin{tabular}{ l | c | r }
+    Rei & 'K' & 75 \\ \hline
+    Rainha & 'Q' & 81 \\ \hline
+    Bispo & 'B' & 66\\ \hline
+    Cavalo & 'N' & 78\\ \hline
+    Torre & 'R' & 82\\
+  \end{tabular}
+\end{center}
+
+\endminipage\hfill
+\minipage{0.3\textwidth}
+
+\large Peças Pretas
+\begin{center}
+  \begin{tabular}{ l | c | r }
+    Rei & 'k' & 107\\ \hline
+    Rainha & 'q' & 113\\ \hline
+    Bispo & 'b' & 98\\ \hline
+    Cavalo & 'n' & 110\\ \hline
+    Torre & 'r' & 114\\
+  \end{tabular}
+\end{center}
+
+\endminipage
+\end{small} \newline\newline
+
+Por último, uma casa vazia é internalmente representada como 0 e visualizada na consola como um espaço vazio. \newline
+
+\large Estado Inicial de Jogo
+\begin{small}
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}
+[[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,  0,    0,   0,   0],
+[  0,   0,   0,   0,  0,    0,   0,   0]]
+\end{lstlisting}
+\end{tabular}
+\end{center}
+\end{small}
+
+\large Possível Estado Intermédio
+\begin{small}
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}
+[[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0,   0, 114,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0,  78,   0],
+[  0,   0,   0,  75,   0,   0,   0,   0],
+[  0,   0,   0,   0,  98,   0,   0,   0],
+[  0,   0,   0,   0,  0,    0,   0,   0],
+[  0,   0,   0,   0,  0,    0,   0,   0]]
+\end{lstlisting}
+\end{tabular}
+\end{center}
+\end{small}
+
+\large Possível Estado Final
+\begin{small}
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}
+[[ 10,   0,   0,   0,   0,   0,   0,   0],
+[  0,   0,   0, 110,   0,   0, 107,  82],
+[  0,  78,   0,  66, 114,  81,   0,   0],
+[  0,   0,   0,   0,   0,  98,  78,   0],
+[  0,   0, 113,  75,  66,   0,   0,   0],
+[  0,   0,   0,   0,  98,   0,   0,   0],
+[  0,   0,   0,   0,   0,   0, 110,   0],
+[  0,   0,  82,   0,   0,   0,   0,   0]]
+\end{lstlisting}
+\end{tabular}
+\end{center}
+\end{small}
 
 \subsection{Visualização do Tabuleiro}
 Em modo de texto, são utilizados os predicados seguintes para produzir uma representação do tabuleiro de jogo. Bocados de código estão omitidos com reticências - '(...)' - por se tratarem de repetições de carateres ou padrões de caracteres.\linebreak
