@@ -39,7 +39,7 @@ validInput(Move, PieceChar, Row, Col):-
 	elementAt(2, Move, ColTemp),
 	Col is ColTemp - 48, %48 is ASCII of 0
 	Col >= 0,
-	Col < 8,
+	Col < 8, !,
 	write('col passed'), nl.
 
 validInput(_, PieceChar, Row, Col):-

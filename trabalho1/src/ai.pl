@@ -29,6 +29,10 @@ getAllMoves( Game, Player, MovesList ):-
  	difficulty( medium ),
  	getBestMove( Game, Player, Piece, X, Y ).
 
+ getAIMove( Game, Player, Piece, X, Y ):-
+ 	difficulty( hard ),
+ 	hardGetMove( Game, Player, Piece, X, Y ).
+
 easyGetMove( Game, Player, Piece, X, Y ):-
 	getAllMoves( Game, Player, MovesList ),
 	random_member( Piece-X-Y, MovesList ).
@@ -67,12 +71,12 @@ evaluatehardGetMove( MovesList, BestMove ):-
 	connected( Piece-X-Y, TempPiece-TempX-TempY ),
 	BestMove = Piece-X-Y.
 
-hardGetMove( Game, Player, BestMove ):-
+hardGetMove( Game, Player, Piece, X, Y ):-
 	getAllMoves( Game, Player, MovesList ),
 	getOpponentBestMoves( Game, Player, MovesList, [], OtherMoves ),
 	otherPlayer( Player, Other ),
 	getNextBestMove( OtherMoves, Other, [], MagicMoves ),
-	evaluatehardGetMove( MagicMoves, BestMove ).
+	evaluatehardGetMove( MagicMoves, Piece-X-Y ).
 
 getNextBestMove( [], _, NewMoves, NewMoves).
 
@@ -93,6 +97,7 @@ getOpponentBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, O
 	otherPlayer( Player, Other ),
 	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
+	write('ASSERT : '), write(Piece-X-Y), write(' WITH '), write(OtherPiece-OtherX-OtherY), nl,
 	getOpponentBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
 
 simulateGameProgression( Game, Player, Piece, X, Y, NewGame ):-

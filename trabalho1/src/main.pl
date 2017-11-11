@@ -17,7 +17,8 @@ secondMenu( '2' ):-
 	write('Choose your difficulty:'), nl,
 	write('1 - Easy'), nl,
 	write('2 - Medium'), nl,
-	write('3 - Go back.'), nl,
+	write('3 - Hard (experimental, very slow)'), nl,
+	write('4 - Go back.'), nl,
 	get_char( N ),
 	get_char( _ ),
 	thirdMenu( N ).
@@ -31,6 +32,10 @@ thirdMenu( '2' ):-
 	playGame( Game ).
 
 thirdMenu( '3' ):-
+	startGame( singlePlayer, hard, Game ), !,
+	playGame( Game ).
+
+thirdMenu( '4' ):-
 	!,
 	start.
 
@@ -42,6 +47,11 @@ startGame( singlePlayer, easy, Game ):-
 startGame( singlePlayer, medium, Game ):-
 	asserta(typeOfGame(singlePlayer)),
 	asserta(difficulty(medium)),
+	initSingleplayerGame( Game, black ).
+
+startGame( singlePlayer, hard, Game ):-
+	asserta(typeOfGame(singlePlayer)),
+	asserta(difficulty(hard)),
 	initSingleplayerGame( Game, black ).
 
 startGame( multiPlayer, Game ):-
