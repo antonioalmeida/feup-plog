@@ -42,9 +42,7 @@ playGame( Game ):-
 	% prepare for next turn
 	setBoard( GameTemp, NextBoard, GameTemp2 ),
 	updateAttackedBoard( GameTemp2, GameTemp3 ),
-
 	getAttackedBoard( GameTemp3, Player, Cenas ),
-	write('CENAS ' ), write(Cenas), nl,
 	incTurnIndex( GameTemp3, GameTemp4 ),
 	switchPlayer( GameTemp4, NewGame ),
 

@@ -11,14 +11,11 @@ getIndexFromRow('g', 6).
 getIndexFromRow('h', 7).
 
 readMoveFromUser(Player, FinalPiece, X, Y):-
-	write('Please insert the details for your next move'),nl,
+	nl, write('Choose your move:'),nl,
 	repeat,
 	write('Use the format PieceRowCol. Example : ke4'), nl,
 	read_line(Move),
 	validInput(Move, PieceChar, Row, Col),
-	%get_char(PieceChar),
-	%get_char(Row),
-	%read(Col),
 	getPiece(Player, PieceChar, FinalPiece),
 	getIndexFromRow(Row, X),
 	Y is 8-Col,

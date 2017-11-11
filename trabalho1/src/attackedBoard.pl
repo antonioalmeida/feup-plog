@@ -60,18 +60,22 @@ attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttacked
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKnight( Piece, Player ),
     !,
+    Xplus1 is X+1,
+    Xminus1 is X-1,
+    Xplus2 is X+2,
+    Xminus2 is X-2,
     Yplus2 is Y+2,
     Yminus2 is Y-2,
     Yplus1 is Y+1,
     Yminus1 is Y-1,
-    incValueAt( AttackedPositions, X+1, Yplus2, AttackedPositions2 ),
-    incValueAt( AttackedPositions2, X+1, Yminus2, AttackedPositions3 ),
-    incValueAt( AttackedPositions3, X-1, Yplus2, AttackedPositions4 ),
-    incValueAt( AttackedPositions4, X-1, Yminus2, AttackedPositions5 ),
-    incValueAt( AttackedPositions5, X+2, Yplus1, AttackedPositions6 ),
-    incValueAt( AttackedPositions6, X+2, Yminus1, AttackedPositions7 ),
-    incValueAt( AttackedPositions7, X-2, Yplus1, AttackedPositions8 ),
-    incValueAt( AttackedPositions8, X-2, Yminus1, FinalAttackedPositions ).
+    incValueAt( AttackedPositions, Xplus1, Yplus2, AttackedPositions2 ),
+    incValueAt( AttackedPositions2, Xplus1, Yminus2, AttackedPositions3 ),
+    incValueAt( AttackedPositions3, Xminus1, Yplus2, AttackedPositions4 ),
+    incValueAt( AttackedPositions4, Xminus1, Yminus2, AttackedPositions5 ),
+    incValueAt( AttackedPositions5, Xplus2, Yplus1, AttackedPositions6 ),
+    incValueAt( AttackedPositions6, Xplus2, Yminus1, AttackedPositions7 ),
+    incValueAt( AttackedPositions7, Xminus2, Yplus1, AttackedPositions8 ),
+    incValueAt( AttackedPositions8, Xminus2, Yminus1, FinalAttackedPositions ).
 
 % Rook
 attackingPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
