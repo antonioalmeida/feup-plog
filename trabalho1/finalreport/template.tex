@@ -300,9 +300,133 @@ Os exemplos de estados de jogo apresentados acima, vistos na consola, podem obse
 \end{figure}
 \end{tiny}
 
-\subsection{Lista de Jogadas Válidas} Obtenção de uma lista de jogadas possíveis. Exemplo: \textit{valid\_moves(+Board, -ListOfMoves)}.
+\subsection{Lista de Jogadas Válidas}
+\textit{TODO: Falar das funções que de facto existem para isto mas só são usadas para AI, para jogadores humanos a jogada é simplesmente testada com o tabuleiro auxiliar de posições atacadas que é atualizado a cada jogada}
 
-\subsection{Execução de Jogadas} Validação e execução de uma jogada num tabuleiro, obtendo o novo estado do jogo. Exemplo: \textit{move(+Move, +Board, -NewBoard)}.
+\subsection{Execução de Jogadas}
+Após ter a informação relativa à próxima jogada, esta é primeiramente verificada quanto à sua validez e, em caso positivo, é executada.
+Para validar a jogada é executada a função validMove que, consoante o tipo de jogada testa a validade de uma forma diferente.
+
+Após a jogada ser validada, a peça é colocada no tabuleiro através da função makeMove.
+Note-se que alguns excertos de código abaixo foram substituídos por comentários de forma a simplificar, minimizar o tamanho ocupado e destacar as partes mais importantes.
+
+\begin{small}
+\begin{lstlisting}[language=Prolog]
+% % % % % % % % % % % % % % %
+% % % % MOVE VALIDATION % % %
+% % % % % % % % % % % % % % %
+% first move, white king needs to be played
+validateMove( Game, Player, Piece, X, Y ):-
+	% check if it's the game's first move
+	!,
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ),
+	isKing( Piece, Player ).
+
+% final move, black king needs to be played
+validateMove( Game, Player, Piece, X, Y ):-
+	% check if it's the game's last move
+	!,
+	\+piecePlayed( Game, Player, Piece ),
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y),
+	isKing( Piece, Player ),
+	asserta( gameOver(currentGame)).
+
+% move where player is forced to use queen
+validateMove( Game, Player, Piece, X, Y ):-
+	needsToPlayQueen( Game, Player ),
+	!,
+	isQueen( Piece, Player ),
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ),
+    %below is the check to see if desired cell is attacked by other player's pieces
+    %code block hidden in other predicates for size purposes
+	otherPlayer( Player, Other ),
+	getAttackedBoard( Game, Other, AttackedBoard ),
+	getPieceAt( AttackedBoard, X, Y, Value ),
+	Value \== 0.
+
+% move where first player uses queen
+validateMove( Game, Player, Piece, X, Y ):-
+	\+piecePlayed( Game, Player, Piece ),
+	isQueen( Piece, Player ),
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ),
+	%check if desired cell is attacked by other player's pieces
+
+% regular move
+validateMove( Game, Player, Piece, X, Y ):-
+	\+isQueen( Piece, Player ),
+	\+isKing( Piece, Player ),
+	\+piecePlayedTwice( Game, Player, Piece ),
+	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ),
+	%check if desired cell is attacked by other player's pieces
+
+% special case (other player's pieces aren't attacking any cell)
+validateMove( Game, Player, Piece, X, Y ):-
+	\+isQueen( Piece, Player ),
+	\+isKing( Piece, Player ),
+	\+piecePlayedTwice( Game, Player, Piece ),
+	getBoard( Game, Board ),
+	otherPlayer( Player, Other ),
+	getAttackedBoard( Game, Other, AttackedBoard ),
+    %check that no free cells are attacked at the moment
+	noFreeCells( Board , AttackedBoard ),
+	isEmpty( Board, X, Y ).
+
+noFreeCells( Board, AttackedBoard ):-
+	noFreeCellsLine( Board, AttackedBoard).
+
+% checks if line each is either occupied and attacked OR not attacked
+noFreeCellsLine( [ CurrLine | RemLines ], [ CurrAttLine | RemAttLines ]):-
+	noFreeCellsPiece( CurrLine, CurrAttLine ),
+	noFreeCellsLine( RemLines, RemAttLines ).
+
+noFreeCellsLine( [], [] ).
+
+% checks if cell isn't playable because it isn't being attacked
+noFreeCellsPiece( [ Cell | RemCells ], [ AttCell | RemAttCells ]):-
+	AttCell == 0,
+	noFreeCellsPiece( RemCells, RemAttCells ).
+
+% checks if cell isn't playable due to being attacked but also occupied
+noFreeCellsPiece( [ Cell | RemCells ], [ AttCell | RemAttCells ]):-
+	AttCell \== 0,
+	Cell \== 0,
+	noFreeCellsPiece(RemCells, RemAttCells ).
+
+noFreeCellsPiece( [], [] ).
+
+makeMove( Board, Piece, X, Y, NewBoard ):-
+	isWithinLimits(X),
+	isWithinLimits(Y),
+	N is 0,
+	makeMoveAux( Board, N, Piece, X, Y, [], NewBoard ).
+
+% % % % % % % % % % % % % % %
+% % % % MOVE EXECUTION % % % %
+% % % % % % % % % % % % % % %
+% case where X or Y is off limits
+makeMove( Board, Piece, X, Y, NewBoard ):-
+	NewBoard = Board.
+
+% base case - need to reverse list
+makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
+	reverse(InvertedBoard, FinalBoard).
+
+% case where N == Y
+makeMoveAux([CurrentLine|RestOfBoard],Y,Piece,X,Y,TempBoard,FinalBoard):-
+	N1 is Y+1,
+	replace( CurrentLine, X, Piece, NewLine ),
+	makeMoveAux(RestOfBoard,N1,Piece,X,Y,[NewLine|TempBoard],FinalBoard).
+
+makeMoveAux([CurrentLine|RestOfBoard],N,Piece,X,Y,TempBoard,FinalBoard):-
+	N1 is N+1,
+	makeMoveAux(RestOfBoard,N1,Piece,X,Y,[CurrentLine|TempBoard],FinalBoard).
+\end{lstlisting}
+\end{small}
 
 \subsection{Avaliação do Tabuleiro} Avaliação do estado do jogo, que permitirá comparar a aplicação das diversas jogadas disponíveis. Exemplo: \textit{value(+Board, +Player, -Value)}.
 
