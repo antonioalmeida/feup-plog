@@ -79,7 +79,7 @@ De uma maneira geral, cada jogada é válida se e só se a peça colocada estive
 As figuras \ref{fig:fig1}, \ref{fig:fig2} e \ref{fig:fig3} ilustram uma sequência de jogadas válidas (com as hipóteses em cada turno destacadas) a partir da posição inicial.
 
 
-\begin{small}
+\begin{tiny}
 \begin{figure}[H]
 \minipage{0.2\textwidth}
 \includegraphics[scale=0.2]{board1.png}
@@ -97,12 +97,12 @@ As figuras \ref{fig:fig1}, \ref{fig:fig2} e \ref{fig:fig3} ilustram uma sequênc
 \label{fig:fig3}
 \endminipage
 \end{figure}
-\end{small}
+\end{tiny}
 
 
 Existe ainda outro caso excecional. Caso seja impossível colocar uma peça de tal modo que seja atacada por uma peça adversária, o jogador pode colocar a peça em qualquer posição livre no tabuleiro. Na figura \ref{fig:fig4} demonstra-se esta situação através de um caso simples.
 
-
+\begin{tiny}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.25]{board4.png}
@@ -110,6 +110,7 @@ Existe ainda outro caso excecional. Caso seja impossível colocar uma peça de t
 \label{fig:fig4}
 \end{center}
 \end{figure}
+\end{tiny}
 
 
 Para além da obrigatoriedade do rei branco ser a primeira peça jogada, existem ainda duas regras adicionais a assinalar para tentar garantir o equilíbrio do jogo:
@@ -128,11 +129,87 @@ Existe, por isso, a possibilidade de empate.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Lógica do Jogo}
 
-Descrever o projeto e implementação da lógica do jogo em Prolog, incluindo a forma de representação do estado do tabuleiro e sua visualização, execução de movimentos, verificação do cumprimento das regras do jogo, determinação do final do jogo e cálculo das jogadas a realizar pelo computador utilizando diversos níveis de jogo. Sugere-se a estruturação desta secção da seguinte forma:
+\subsection{Representação do Estado do Jogo}
+(To be completed)
 
-\subsection{Representação do Estado do Jogo} Pode ser idêntico ao descrito no relatório intercalar.)
+\subsection{Visualização do Tabuleiro}
+Em modo de texto, são utilizados os predicados seguintes para produzir uma representação do tabuleiro de jogo. Bocados de código estão omitidos com reticências - '(...)' - por se tratarem de repetições de carateres ou padrões de caracteres.\linebreak
 
-\subsection{Visualização do Tabuleiro} (Pode ser idêntico ao descrito no relatório intercalar.)
+\begin{small}
+\begin{lstlisting}[language=Prolog]
+getPieceDisplay(0, 32). % space
+
+%white pieces
+getPieceDisplay('K', 9812). % king
+getPieceDisplay('Q', 9813). % queen
+getPieceDisplay('R', 9814). % rook
+getPieceDisplay('B', 9815). % bishop
+getPieceDisplay('N', 9816). % knight
+
+%black pieces
+getPieceDisplay('k', 9818). % king
+getPieceDisplay('q', 9819). % queen
+getPieceDisplay('r', 9820). % rook
+getPieceDisplay('b', 9821). % bishop
+getPieceDisplay('n', 9822). % knight
+
+displayBoard( Board ) :-
+	displayBoardHeader,
+	N is 8,
+	displayBoardTail(Board, N),
+	displayBottom.
+
+displayBoardTail([], 0).
+
+displayBoardTail( [ Row | T ], N ):-
+	write('---------------------------------'), nl,
+	displayRow(Row, N), nl,
+	N1 is N-1,
+	displayBoardTail(T, N1).
+
+displayRow([], N):-
+	write('| '), displayNumber(N).
+
+displayRow( [ CurrentPiece | T ] , N ):-
+	write('| '),
+	getPieceDisplay(CurrentPiece, PieceDisplay),
+	put_code(PieceDisplay),
+	write(' '),
+	displayRow(T, N).
+
+displayBoardHeader:-
+	nl,
+	write('  a   b   c   d   e   f   g   h '),
+	nl.
+
+displayBottom:-
+	write('---------------------------------'), nl.
+
+displayNumber(N) :- write(N), !.
+\end{lstlisting}
+\end{small}
+
+Os exemplos de estados de jogo apresentados acima, vistos na consola, podem observar-se nas figuras \ref{fig:fig5}, \ref{fig:fig6} e \ref{fig:fig7}:
+
+\begin{tiny}
+\begin{figure}[H]
+\minipage{0.2\textwidth}
+\includegraphics[scale=0.2]{board1.png}
+\caption{\textit{Representação textual do estado de jogo inicial.}}
+\label{fig:fig5}
+\endminipage\hfill
+\minipage{0.2\textwidth}
+\includegraphics[scale=0.2]{board1.png}
+\caption{\textit{Representação textual do estado de jogo intermédio.}}
+\label{fig:fig6}
+\endminipage\hfill
+\minipage{0.2\textwidth}
+\includegraphics[scale=0.2]{board1.png}
+\caption{\textit{Representação textual do estado de jogo final.}}
+\label{fig:fig7}
+\endminipage
+\end{figure}
+\end{tiny}
 
 \subsection{Lista de Jogadas Válidas} Obtenção de uma lista de jogadas possíveis. Exemplo: \textit{valid\_moves(+Board, -ListOfMoves)}.
 

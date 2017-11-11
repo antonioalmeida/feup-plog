@@ -2,10 +2,6 @@
 :-include('utils.pl').
 
 getPieceDisplay(0, 32). % space
-getPieceDisplay('1', 65). % 'A' - temporary
-% DONT FORGET : update internal
-% piece representation on final
-% report
 
 %white pieces
 getPieceDisplay('K', 9812). % king
@@ -75,10 +71,10 @@ makeMove( Board, Piece, X, Y, NewBoard ):-
 	N is 0,
 	makeMoveAux( Board, N, Piece, X, Y, [], NewBoard ).
 
-% case where X or Y is off limits 
+% case where X or Y is off limits
 makeMove( Board, Piece, X, Y, NewBoard ):-
 	NewBoard = Board.
-	
+
 % base case - need to reverse list
 % TODO: find a way to do this without having to reverse final list
 makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
