@@ -428,9 +428,79 @@ makeMoveAux([CurrentLine|RestOfBoard],N,Piece,X,Y,TempBoard,FinalBoard):-
 \end{lstlisting}
 \end{small}
 
-\subsection{Avaliação do Tabuleiro} Avaliação do estado do jogo, que permitirá comparar a aplicação das diversas jogadas disponíveis. Exemplo: \textit{value(+Board, +Player, -Value)}.
+\subsection{Avaliação do Tabuleiro}
+A avaliação de um determinado estado de jogo depende diretamente do tabuleiro auxiliar de posições atacadas pelo jogador.
+Visto que a pontuação resulta da soma do número de posições atacadas, a avaliação é feita pelo método de cálculo da pontuação final.
+Assim, uma jogada que naquele momento produza um maior número total de casas atacadas é considerada a melhor jogada.
+A função de avaliação recebe o tabuleiro auxiliar de peças atacadas gerado a partir do tabuleiro de jogo naquele momento e soma os valores em casa posição (que representam o número de peças que atacam aquela posição).
 
-\subsection{Final do Jogo} Verificação do fim do jogo, com identificação do vencedor. Exemplo: \textit{game\_over(+Board, -Winner)}.
+\begin{small}
+\begin{lstlisting}[language=Prolog]
+evaluateBoard( Board, Score ):-
+	evaluateBoardAux( Board, 0, Score ).
+
+evaluateBoardAux( [ CurrentLine | RestOfBoard ], CurrentScore, Score ):-
+	evaluateBoardLine( CurrentLine, 0, LineScore ),
+	Temp is LineScore+CurrentScore,
+	evaluateBoardAux( RestOfBoard, Temp, Score ).
+
+evaluateBoardAux( [], Score, Score ).
+
+evaluateBoardLine( [ N | RestOfLine ], CurrentScore, Score):-
+	Temp is CurrentScore + N,
+	evaluateBoardLine( RestOfLine, Temp, Score ).
+
+evaluateBoardLine( [ 0 | RestOfLine ], CurrentScore, Score ):-
+	evaluateBoardLine( RestOfLine, CurrentScore, Score ).
+
+evaluateBoardLine( [], Score, Score ).
+\end{lstlisting}
+\end{small}
+
+\subsection{Final do Jogo}
+A primeira definição do predicado de ciclo de jogo playGame testa o facto gameOver com o jogo atual, facto que é só adicionado após a última peça (rei preto) tiver sido jogada, através da chamada asserta.
+Caso o jogo tenha de facto terminado, a pontuação de cada jogador é calculada através da função de avaliação e é imprimida a cor vencedora.
+
+\begin{small}
+moveValidation.pl:
+\begin{lstlisting}[language=Prolog]
+% final move, black king needs to be played
+validateMove( Game, Player, Piece, X, Y ):-
+    %check move validity (code hidden)
+    asserta( gameOver(currentGame)).
+\end{lstlisting}
+\end{small}
+
+\begin{small}
+game.pl:
+\begin{lstlisting}[language=Prolog]
+playGame( Game ):-
+    gameOver( currentGame ),
+    getAttackedBoard( Game, white, AttackedBoardWhite ),
+    getAttackedBoard( Game, black, AttackedBoardBlack ),
+
+    evaluateBoard( AttackedBoardWhite, WhiteScore ),
+    evaluateBoard( AttackedBoardBlack, BlackScore ),
+
+    displayWinner( WhiteScore, BlackScore ).
+
+    displayWinner( White, Black ):-
+    	White > Black,
+    	write('!!!!!!!!!!!!'),
+    	write('!White Wins!'),
+    	write('!!!!!!!!!!!!').
+
+    displayWinner( White, Black ):-
+    	emoji(trophy),
+        (...)
+    	emoji(trophy), nl,
+    	emoji(trophy),
+    	write(' Black Wins '),
+    	emoji(trophy), nl,
+    	(...)
+    	emoji(trophy).
+\end{lstlisting}
+\end{small}
 
 \subsection{Jogada do Computador} Escolha da jogada a efetuar pelo computador, dependendo do nível de dificuldade. Por exemplo: \textit{choose\_move(+Level, +Board, -Move)}.
 
