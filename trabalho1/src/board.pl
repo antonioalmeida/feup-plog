@@ -64,7 +64,6 @@ displayBottom:-
 
 displayNumber(N) :- write(N), !.
 
-% working
 makeMove( Board, Piece, X, Y, NewBoard ):-
 	isWithinLimits(X),
 	isWithinLimits(Y),
@@ -76,7 +75,6 @@ makeMove( Board, Piece, X, Y, NewBoard ):-
 	NewBoard = Board.
 
 % base case - need to reverse list
-% TODO: find a way to do this without having to reverse final list
 makeMoveAux([], _, _, _, _, InvertedBoard, FinalBoard):-
 	reverse(InvertedBoard, FinalBoard).
 
