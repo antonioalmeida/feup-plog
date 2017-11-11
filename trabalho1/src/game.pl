@@ -189,26 +189,22 @@ displayTurnInfo( Game ):-
 
 displayWinner( White, Black ):-
 	White > Black,
-	write('!!!!!!!!!!!!'),
-	write('!White Wins!'),
-	write('!!!!!!!!!!!!').
+	emoji(trophy, 8), nl,
+	emoji( trophy ),
+	write('  White Wins'), 
+	emoji(trophy), nl,
+	emoji(trophy, 8).
 
 displayWinner( White, Black ):-
-	emoji(trophy), 
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy),
+	Black > White,
+	emoji(trophy, 8), nl,
+	emoji( trophy ),
+	write('  Black Wins'), 
 	emoji(trophy), nl,
-	emoji(trophy),
-	write(' Black Wins '), 
-	emoji(trophy), nl,
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy),
-	emoji(trophy).
+	emoji(trophy, 8).
+
+displayWinner( White, Black ):-
+	write('A tie!').
 
 displayPlayer(white):- write('white').
 displayPlayer(black):- write('black').

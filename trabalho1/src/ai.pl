@@ -85,9 +85,7 @@ getNextBestMove( [ Piece-X-Y-Game | RestOfMoves ], Player, TempMoves, NewMoves )
 	otherPlayer( Player, Other ),
 	!,
 	getBestMoveWithScore( NewGame, Other, OtherScore, OtherPiece, OtherX, OtherY ),
-
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
-
 	getNextBestMove( RestOfMoves, Player, [ OtherScore-OtherPiece-OtherX-OtherY | TempMoves], NewMoves ).
 
 getOpponentBestMoves( _, _, [], OthersMoves, OthersMoves).
