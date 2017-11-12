@@ -30,7 +30,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	!,
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),
-	isEmpty( Board, X, Y ),
+	isEmpty( Board, X, Y ), 
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
@@ -42,7 +42,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	\+piecePlayed( Game, Player, Piece ),
 	isQueen( Piece, Player ),
 	getBoard( Game, Board ),
-	isEmpty( Board, X, Y ),
+	isEmpty( Board, X, Y ), 
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
@@ -56,7 +56,7 @@ validateMove( Game, Player, Piece, X, Y ):-
 	\+piecePlayedTwice( Game, Player, Piece ),
 
 	getBoard( Game, Board ),
-	isEmpty( Board, X, Y ),
+	isEmpty( Board, X, Y ), 
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
@@ -65,15 +65,14 @@ validateMove( Game, Player, Piece, X, Y ):-
 
 % special case (other player's pieces aren't attacking any cell)
 validateMove( Game, Player, Piece, X, Y ):-
-	\+isQueen( Piece, Player ),
 	\+isKing( Piece, Player ),
 	\+piecePlayedTwice( Game, Player, Piece ),
 
 	getBoard( Game, Board ),
-	isEmpty( Board, X, Y ),
+	isEmpty( Board, X, Y ), 
 
 	otherPlayer( Player, Other ),
-	getAttackedBoard( Game, Other, AttackedBoard ),
+	getAttackedBoard( Game, Other, AttackedBoard ), !,
 	noFreeCells( Board , AttackedBoard ). %check that no free cells are attacked at the moment
 
 noFreeCells( Board, AttackedBoard ):-

@@ -1,4 +1,5 @@
 start:-
+	clearScreen,
 	write('Bem vindo ao Xadrersi.'), nl, nl,
 
 	write('1 - Multiplayer match.'), nl,
@@ -7,64 +8,72 @@ start:-
 	write('4 - Exit.'), nl,
 	get_char( N ),
 	get_char( _ ),
-	secondMenu( N ), !.
+	clearScreen,
+	chooseDifficultyMenu( N ), !.
 
-secondMenu( '1' ):-
+% Multiplayer game - no difficulty
+chooseDifficultyMenu( '1' ):-
 	startGame( multiPlayer, Game ), !,
 	playGame( Game ).
 
-secondMenu( '2' ):-
-	write('Single Player '), nl, nl,
+% Single Player game
+chooseDifficultyMenu( '2' ):-
+	write('Single Player '), nl, 
 	write('Choose your difficulty:'), nl,
 	write('1 - Easy'), nl,
 	write('2 - Medium'), nl,
 	write('3 - Hard (experimental, very slow)'), nl,
 	write('4 - Go back.'), nl,
-	get_char( N ),
+	get_char( NDifficulty ),
 	get_char( _ ),
-	clearScreen,
-	thirdMenu( N ).
 
-secondMenu( '3' ):-
+	chooseDifficulty( NDifficulty, Difficulty ),
+	clearScreen,
+	chooseColorMenu( Difficulty ).
+
+% No Player game - always medium
+chooseDifficultyMenu( '3' ):-
 	startGame( noPlayer, Game ), !,
 	playGame( Game ).
 
-secondMenu( '4' ):- fail.
+% exit
+chooseDifficultyMenu( '4').
 
+% case with invalid input
+chooseDifficultyMenu( _ ):- !, start.
 
-thirdMenu( '1' ):-
-	startGame( singlePlayer, easy, Game ),
+chooseDifficulty( '1', easy ).
+chooseDifficulty( '2', medium ).
+chooseDifficulty( '3', hard ).
+
+chooseColorMenu( Difficulty ):-
+	write('Choose your color:'), nl,
+	write('1 - White'), nl,
+	write('2 - Black'), nl,
+	write('3 - Go Back'), nl,
+	get_char( NColor),
+	get_char( _ ),
+	chooseColor( NColor, PlayerColor ),
+	startAndPlayGame( Difficulty, PlayerColor ).
+
+% This is switched, actually choosing AI's color
+chooseColor( '1', black ).
+chooseColor( '2', white).
+
+startAndPlayGame( Difficulty, PlayerColor ):-
+	startGame( singlePlayer, Difficulty, PlayerColor, Game ),
 	clearScreen, !,
 	playGame( Game ).
 
-thirdMenu( '2' ):-
-	startGame( singlePlayer, medium, Game ),
-	clearScreen, !,
-	playGame( Game ).
-
-thirdMenu( '3' ):-
-	startGame( singlePlayer, hard, Game ),
-	clearScreen, !,
-	playGame( Game ).
-
-thirdMenu( '4' ):-
+% case with invalid input
+startAndPlayGame( _, _ ):-
 	!,
 	start.
 
-startGame( singlePlayer, easy, Game ):-
+startGame( singlePlayer, Difficulty, PlayerColor, Game ):-
 	asserta(typeOfGame(singlePlayer)),
-	asserta(difficulty(easy)),
-	initSingleplayerGame( Game, black ).
-
-startGame( singlePlayer, medium, Game ):-
-	asserta(typeOfGame(singlePlayer)),
-	asserta(difficulty(medium)),
-	initSingleplayerGame( Game, black ).
-
-startGame( singlePlayer, hard, Game ):-
-	asserta(typeOfGame(singlePlayer)),
-	asserta(difficulty(hard)),
-	initSingleplayerGame( Game, black ).
+	asserta(difficulty(Difficulty)),
+	initSingleplayerGame( Game, PlayerColor ).
 
 startGame( multiPlayer, Game ):-
 	asserta(typeOfGame(multiPlayer)),

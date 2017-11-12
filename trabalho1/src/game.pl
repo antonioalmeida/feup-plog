@@ -222,7 +222,7 @@ displayWinner( White, Black ):-
 	emoji( trophy ),
 	write('  White Wins'), 
 	emoji(trophy), nl,
-	emoji(trophy, 8).
+	emoji(trophy, 8), nl.
 
 displayWinner( White, Black ):-
 	Black > White,
@@ -230,7 +230,7 @@ displayWinner( White, Black ):-
 	emoji( trophy ),
 	write('  Black Wins'), 
 	emoji(trophy), nl,
-	emoji(trophy, 8).
+	emoji(trophy, 8), nl.
 
 displayWinner( White, Black ):-
 	write('The match is a tie! '), nl.
