@@ -110,7 +110,7 @@ getOpponentBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, O
 	otherPlayer( Player, Other ),
 	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
-	write('ASSERT : '), write(Piece-X-Y), write(' WITH '), write(OtherPiece-OtherX-OtherY), nl, !, 
+	write('Connected : '), write(Piece-X-Y), write(' with '), write(OtherPiece-OtherX-OtherY), nl, !, 
 	getOpponentBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
 
 simulateGameProgression( Game, Player, Piece, X, Y, NewGame ):-

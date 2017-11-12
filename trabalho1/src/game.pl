@@ -15,6 +15,9 @@
 % case where game is finished
 playGame( Game ):-
 	gameOver( currentGame ),
+	getBoard( Game, Board ),
+	displayBoard( Board ),
+
 	getAttackedBoard( Game, white, AttackedBoardWhite ),
 	getAttackedBoard( Game, black, AttackedBoardBlack ),
 
@@ -206,37 +209,37 @@ switchPlayer( Game, NewGame ):-
 displayTurnInfo( Game ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
 	getTurnIndex( Game, N ),
-	nl, write('Player: '), displayPlayer( CurrentPlayer ), nl,
-	write('Turn N: '), write(N), nl.
+	write('Turn Number: '), write(N), nl,
+	write('Current Player: '), displayPlayer( CurrentPlayer ), nl.
 
 displayScore( White, Black ):-
-	emoji(flag),
-	write('  Game Over!'), 
+	nl,	emoji(flag),
+	write(' Game Over! '), 
 	emoji(flag), nl,
-	write('White Score: '), write(White), nl,
-	write('Black Score: '), write(Black), nl.
+	emoji(white), write(' White Score: '), write(White), nl,
+	emoji(black), write(' Black Score: '), write(Black), nl.
 
 displayWinner( White, Black ):-
 	White > Black,
 	emoji(trophy, 8), nl,
 	emoji( trophy ),
-	write('  White Wins'), 
+	write(' White Wins '), 
 	emoji(trophy), nl,
 	emoji(trophy, 8), nl.
 
 displayWinner( White, Black ):-
 	Black > White,
-	emoji(trophy, 8), nl,
+	nl, emoji(trophy, 8), nl,
 	emoji( trophy ),
-	write('  Black Wins'), 
+	write(' Black Wins '), 
 	emoji(trophy), nl,
 	emoji(trophy, 8), nl.
 
 displayWinner( White, Black ):-
 	write('The match is a tie! '), nl.
 
-displayPlayer(white):- write('white').
-displayPlayer(black):- write('black').
+displayPlayer(white):- emoji(white), write(' White ').
+displayPlayer(black):- emoji(black), write(' Black ').
 
 otherPlayer(white, black).
 otherPlayer(black, white).

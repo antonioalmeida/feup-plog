@@ -41,7 +41,6 @@ readMoveFromUser(Player, FinalPiece, X, Y):-
 	getPiece(Player, PieceChar, FinalPiece),
 	getIndexFromRow(Row, X),
 	Y is 8-Col.
-	%write(FinalPiece-Row-Col).
 
 validInput(Move, PieceChar, Row, Col):-
 	length(Move, 3),
@@ -49,12 +48,10 @@ validInput(Move, PieceChar, Row, Col):-
 	write(Piece), nl,
 	char_code(PieceChar, Piece),
 	validPiece(PieceChar),
-	%write('piece passed'),nl,
 	elementAt(1, Move, RowTemp),
 	char_code(RowTemp2, RowTemp),
 	toLowercase(RowTemp2, Row),
 	validRow(Row),
-	%write('row passed'), nl,
 	elementAt(2, Move, ColTemp),
 	Col is ColTemp - 48, %48 is ASCII of 0
 	Col > 0,

@@ -1,7 +1,10 @@
 start:-
 	clearScreen,
-	write('Bem vindo ao Xadrersi.'), nl, nl,
+	emoji(wave), 
+	write(' Welcome to Xadrersi '), 
+	emoji(wave), nl, nl,
 
+	write('Main Menu'), nl,
 	write('1 - Multiplayer match.'), nl,
 	write('2 - Single Player match.'), nl,
 	write('3 - No Player match.'), nl,
