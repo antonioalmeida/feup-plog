@@ -21,18 +21,22 @@ secondMenu( '2' ):-
 	write('4 - Go back.'), nl,
 	get_char( N ),
 	get_char( _ ),
+	clearScreen,
 	thirdMenu( N ).
 
 thirdMenu( '1' ):-
-	startGame( singlePlayer, easy, Game ), !,
+	startGame( singlePlayer, easy, Game ),
+	clearScreen, !,
 	playGame( Game ).
 
 thirdMenu( '2' ):-
-	startGame( singlePlayer, medium, Game ), !,
+	startGame( singlePlayer, medium, Game ),
+	clearScreen, !,
 	playGame( Game ).
 
 thirdMenu( '3' ):-
-	startGame( singlePlayer, hard, Game ), !,
+	startGame( singlePlayer, hard, Game ),
+	clearScreen, !,
 	playGame( Game ).
 
 thirdMenu( '4' ):-

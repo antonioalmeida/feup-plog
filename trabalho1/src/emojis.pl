@@ -1,5 +1,6 @@
 emoji(trophy):- write(' '), put_code(127942). 
-emoji(party):- write(' '), put_code(7574). 
+emoji(dice):- write(' '), put_code(127922). 
+emoji(flag):- write(' '), put_code(127937). 
 
 emoji( _, 0).
 emoji( Code, N ):-

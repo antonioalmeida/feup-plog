@@ -8,12 +8,10 @@
 :-include('emojis.pl').
 
 :-dynamic typeOfGame/1.
-:-dynamic piecePlayed/2.
-:-dynamic piecePlayedTwice/2.
-:-dynamic needsToPlayQueen/1.
 :-dynamic gameOver/1.
 :-dynamic connected/2.
 
+% case where game is finished
 playGame( Game ):-
 	gameOver( currentGame ),
 	getAttackedBoard( Game, white, AttackedBoardWhite ),
@@ -22,7 +20,17 @@ playGame( Game ):-
 	evaluateBoard( AttackedBoardWhite, WhiteScore ),
 	evaluateBoard( AttackedBoardBlack, BlackScore ),
 
-	displayWinner( WhiteScore, BlackScore ).
+	displayScore( WhiteScore, BlackScore ),
+	displayWinner( WhiteScore, BlackScore ),
+
+	retractall(gameOver(_)),
+	retractall(connected(_,_)),
+	retractall(typeOfGame(_)),
+
+	write('Press ENTER to continue.'), nl,
+	read_line(_),
+	clearScreen,	
+	!, start.
 
 playGame( Game ):-
 	% get stuff from game class
@@ -186,6 +194,13 @@ displayTurnInfo( Game ):-
 	nl, write('Player: '), displayPlayer( CurrentPlayer ), nl,
 	write('Turn N: '), write(N), nl.
 
+displayScore( White, Black ):-
+	emoji(flag),
+	write('  Game Over!'), 
+	emoji(flag), nl,
+	write('White Score: '), write(White), nl,
+	write('Black Score: '), write(Black), nl.
+
 displayWinner( White, Black ):-
 	White > Black,
 	emoji(trophy, 8), nl,
@@ -203,7 +218,7 @@ displayWinner( White, Black ):-
 	emoji(trophy, 8).
 
 displayWinner( White, Black ):-
-	write('A tie!').
+	write('The match is a tie! '), nl.
 
 displayPlayer(white):- write('white').
 displayPlayer(black):- write('black').
