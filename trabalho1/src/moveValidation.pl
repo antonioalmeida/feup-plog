@@ -70,11 +70,11 @@ validateMove( Game, Player, Piece, X, Y ):-
 	\+piecePlayedTwice( Game, Player, Piece ),
 
 	getBoard( Game, Board ),
+	isEmpty( Board, X, Y ),
 
 	otherPlayer( Player, Other ),
 	getAttackedBoard( Game, Other, AttackedBoard ),
-	noFreeCells( Board , AttackedBoard ), %check that no free cells are attacked at the moment
-	isEmpty( Board, X, Y ).
+	noFreeCells( Board , AttackedBoard ). %check that no free cells are attacked at the moment
 
 noFreeCells( Board, AttackedBoard ):-
 	noFreeCellsLine( Board, AttackedBoard).

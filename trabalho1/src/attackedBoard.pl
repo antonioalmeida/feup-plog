@@ -17,7 +17,7 @@ updateAttackedBoardAux( Player, Board, AttackedBoard, X, Y, NewAttackedBoard ):-
     \+(X == 8),
     \+(isEmpty( Board, X, Y )),
     getPieceAt( Board, X, Y, Piece ),
-    pieceAttackedPositions( Player, Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
+    pieceAttackedUpdate( Player, Board, AttackedBoard, Piece, X, Y, NextAttackedBoard ),
     X1 is X+1,
     updateAttackedBoardAux( Player, Board, NextAttackedBoard, X1, Y, NewAttackedBoard).
 
@@ -39,7 +39,7 @@ updateAttackedBoardAux( Player, _, AttackedBoard, _, 8, NewAttackedBoard ):-
     NewAttackedBoard = AttackedBoard.
 
 % King
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKing( Piece, Player ),
     !,
     Y1 is Y-1,
@@ -57,7 +57,7 @@ pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAtta
     incValueAt( AttackedPositions8, X, Y2, FinalAttackedPositions).
 
 % Knight
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isKnight( Piece, Player ),
     !,
     Xplus1 is X+1,
@@ -79,7 +79,7 @@ pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAtta
     incValueAt( AttackedPositions8, Xminus2, Yminus1, FinalAttackedPositions ).
 
 % Rook
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isRook( Piece, Player ),
     !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
@@ -88,7 +88,7 @@ pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAtta
     pieceAttackedPositions( Board, AttackedPositions3, X, Y, 0, -1, FinalAttackedPositions ).
 
 % Bishop
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isBishop( Piece, Player ),
     !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 1, AttackedPositions1 ),
@@ -97,7 +97,7 @@ pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAtta
     pieceAttackedPositions( Board, AttackedPositions3, X, Y, -1, -1, FinalAttackedPositions ).
 
 % Queen
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     isQueen( Piece, Player ),
     !,
     pieceAttackedPositions( Board, AttackedPositions, X, Y, 1, 0, AttackedPositions1 ),
@@ -110,7 +110,7 @@ pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAtta
     pieceAttackedPositions( Board, AttackedPositions7, X, Y, -1, -1, FinalAttackedPositions ).
 
 % Case where piece is from different player
-pieceAttackedPositions( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
+pieceAttackedUpdate( Player, Board, AttackedPositions, Piece, X, Y, FinalAttackedPositions ):-
     FinalAttackedPositions = AttackedPositions.
 
 % Recursive generic function %

@@ -37,7 +37,7 @@ easyGetMove( Game, Player, Piece, X, Y ):-
 	getAllMoves( Game, Player, MovesList ),
 	random_member( Piece-X-Y, MovesList ).
 
-getBestMove( Game, Player, Piece, X, Y):-
+getBestMove( Game, Player, Piece, X, Y ):-
 	evaluateAllMoves( Game, Player, MovesList ),
 	last( MovesList, _-Piece-X-Y ).
 
@@ -95,7 +95,7 @@ getOpponentBestMoves( Game, Player, [ Piece-X-Y | RestOfMoves ], TempNewMoves, O
 	otherPlayer( Player, Other ),
 	getBestMove( NewGame, Other, OtherPiece, OtherX, OtherY ),
 	assert(connected(Piece-X-Y, OtherPiece-OtherX-OtherY)),
-	write('ASSERT : '), write(Piece-X-Y), write(' WITH '), write(OtherPiece-OtherX-OtherY), nl,
+	write('ASSERT : '), write(Piece-X-Y), write(' WITH '), write(OtherPiece-OtherX-OtherY), nl, !, 
 	getOpponentBestMoves( Game, Player, RestOfMoves, [ OtherPiece-OtherX-OtherY-NewGame | TempNewMoves ], OthersMoves ).
 
 simulateGameProgression( Game, Player, Piece, X, Y, NewGame ):-
