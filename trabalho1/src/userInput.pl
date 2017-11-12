@@ -1,5 +1,27 @@
 :- use_module(library(lists)).
 
+% valid rows
+validRow('a').
+validRow('b').
+validRow('c').
+validRow('d').
+validRow('e').
+validRow('f').
+validRow('g').
+validRow('h').
+
+% valid pieces
+validPiece('k').
+validPiece('K').
+validPiece('q').
+validPiece('Q').
+validPiece('b').
+validPiece('B').
+validPiece('r').
+validPiece('R').
+validPiece('n').
+validPiece('N').
+
 % rows to ints
 getIndexFromRow('a', 0).
 getIndexFromRow('b', 1).
@@ -40,26 +62,6 @@ validInput(Move, PieceChar, Row, Col):-
 
 validInput(_, PieceChar, Row, Col):-
 	write('Invalid move format. Please try again.'), nl, fail.
-
-validRow('a').
-validRow('b').
-validRow('c').
-validRow('d').
-validRow('e').
-validRow('f').
-validRow('g').
-validRow('h').
-
-validPiece('k').
-validPiece('K').
-validPiece('q').
-validPiece('Q').
-validPiece('b').
-validPiece('B').
-validPiece('r').
-validPiece('R').
-validPiece('n').
-validPiece('N').
 
 getPiece(black, PieceChar, FinalPiece):-
 	toLowercase( PieceChar, FinalPiece).

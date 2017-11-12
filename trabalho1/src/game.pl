@@ -32,6 +32,7 @@ playGame( Game ):-
 	clearScreen,	
 	!, start.
 
+% regular case 
 playGame( Game ):-
 	% get stuff from game class
 	getBoard( Game, Board ),
@@ -57,6 +58,7 @@ playGame( Game ):-
 	clearScreen,
 	playGame( NewGame ).
 
+% Single Player AI's turn
 getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( singlePlayer ),
 	getAIPlayer( Game, AIPlayer ),
@@ -64,13 +66,25 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	write('AI is thinking...'), nl,
 	getAIMove( Game, Player, Piece, X, Y ).
 
+% Single Player user's turn
 getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( singlePlayer ),
 	readMoveFromUser( Player, Piece, X, Y ).
 
+%  Multiplayer regular turn
 getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( multiPlayer ),
 	readMoveFromUser( Player, Piece, X, Y ).
+
+% AI vs AI regular turn
+getNextMove( Game, Player, Piece, X, Y ):-
+	typeOfGame( noPlayer ),
+	write('AI is thinking...'), nl,
+	getAIMove( Game, Player, Piece, X, Y ),
+	clearScreen,
+	write('The AI has decided!'), 
+	write('Press ENTER to apply the move.'), nl,
+	read_line(_).
 
 %%%%%%%%%%%%%%%%
 % Game "class" %

@@ -3,10 +3,11 @@ start:-
 
 	write('1 - Multiplayer match.'), nl,
 	write('2 - Single Player match.'), nl,
-	write('3 - Exit.'), nl,
+	write('3 - No Player match.'), nl,
+	write('4 - Exit.'), nl,
 	get_char( N ),
 	get_char( _ ),
-	secondMenu( N ).
+	secondMenu( N ), !.
 
 secondMenu( '1' ):-
 	startGame( multiPlayer, Game ), !,
@@ -23,6 +24,12 @@ secondMenu( '2' ):-
 	get_char( _ ),
 	clearScreen,
 	thirdMenu( N ).
+
+secondMenu( '3' ):-
+	startGame( noPlayer, Game ), !,
+	playGame( Game ).
+
+secondMenu( '4' ):- fail.
 
 thirdMenu( '1' ):-
 	startGame( singlePlayer, easy, Game ),
@@ -60,4 +67,8 @@ startGame( singlePlayer, hard, Game ):-
 
 startGame( multiPlayer, Game ):-
 	asserta(typeOfGame(multiPlayer)),
+	initMultiplayerGame( Game ).
+
+startGame( noPlayer, Game ):-
+	asserta(typeOfGame(noPlayer)),
 	initMultiplayerGame( Game ).

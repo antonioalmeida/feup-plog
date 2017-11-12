@@ -1,5 +1,6 @@
 :- use_module(library(random)).
 
+% valid Player-Piece pairs
 playerPiece(white, 'K').
 playerPiece(white, 'Q').
 playerPiece(white, 'R').
@@ -13,7 +14,7 @@ playerPiece(black, 'n').
 playerPiece(black, 'b').
 
 getValidMove( Game, Player, Piece, X, Y ):-
-	playerPiece(Player, Piece), %wtf????????????????? it works idc
+	playerPiece(Player, Piece), 
 	validateMove( Game, Player, Piece, X, Y).
 
 getAllMoves( Game, Player, MovesList ):-
@@ -21,17 +22,31 @@ getAllMoves( Game, Player, MovesList ):-
  		getValidMove( Game, Player, Piece, X, Y ), UnsortedMoves ),
  	sort( UnsortedMoves, MovesList ).
 
+ % Easy AI
  getAIMove( Game, Player, Piece, X, Y ):-
  	difficulty( easy ),
  	easyGetMove( Game, Player, Piece, X, Y ).
 
+ % Medium AI
  getAIMove( Game, Player, Piece, X, Y ):-
  	difficulty( medium ),
  	getBestMove( Game, Player, Piece, X, Y ).
 
+ % Hard AI
  getAIMove( Game, Player, Piece, X, Y ):-
  	difficulty( hard ),
  	hardGetMove( Game, Player, Piece, X, Y ).
+
+ % AI vs AI first turn
+ getAIMove( Game, Player, Piece, X, Y ):-
+ 	typeOfGame( noPlayer ),
+ 	getTurnIndex( Game, 0 ),
+ 	easyGetMove( Game, Player, Piece, X, Y ).
+
+  % AI vs AI regular turn
+ getAIMove( Game, Player, Piece, X, Y ):-
+ 	typeOfGame( noPlayer ),
+ 	getBestMove( Game, Player, Piece, X, Y ).
 
 easyGetMove( Game, Player, Piece, X, Y ):-
 	getAllMoves( Game, Player, MovesList ),
