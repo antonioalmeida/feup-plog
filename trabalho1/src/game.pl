@@ -9,6 +9,7 @@
 
 :-dynamic typeOfGame/1.
 :-dynamic gameOver/1.
+:-dynamic difficulty/1.
 :-dynamic connected/2.
 
 % case where game is finished
@@ -24,6 +25,7 @@ playGame( Game ):-
 	displayWinner( WhiteScore, BlackScore ),
 
 	retractall(gameOver(_)),
+	retractall(difficulty(_)),
 	retractall(connected(_,_)),
 	retractall(typeOfGame(_)),
 
@@ -81,8 +83,7 @@ getNextMove( Game, Player, Piece, X, Y ):-
 	typeOfGame( noPlayer ),
 	write('AI is thinking...'), nl,
 	getAIMove( Game, Player, Piece, X, Y ),
-	clearScreen,
-	write('The AI has decided!'), 
+	write('The AI has decided!'), nl,
 	write('Press ENTER to apply the move.'), nl,
 	read_line(_).
 

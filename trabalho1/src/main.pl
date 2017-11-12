@@ -31,6 +31,7 @@ secondMenu( '3' ):-
 
 secondMenu( '4' ):- fail.
 
+
 thirdMenu( '1' ):-
 	startGame( singlePlayer, easy, Game ),
 	clearScreen, !,
