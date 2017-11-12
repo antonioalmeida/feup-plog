@@ -46,6 +46,7 @@ playGame( Game ):-
 	incTurnIndex( GameTemp3, GameTemp4 ),
 	switchPlayer( GameTemp4, NewGame ),
 
+	clearScreen,
 	playGame( NewGame ).
 
 getNextMove( Game, Player, Piece, X, Y ):-

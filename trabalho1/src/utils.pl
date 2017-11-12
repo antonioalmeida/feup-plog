@@ -47,3 +47,5 @@ countOccurencesAux( [ Value | Tail ], Value, N, Result ):-
 countOccurencesAux( [ Head | Tail ], Value, N, Result ):-
 	countOccurencesAux( Tail, Value, N, Result ).
 
+clearScreen:-
+	nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl.
