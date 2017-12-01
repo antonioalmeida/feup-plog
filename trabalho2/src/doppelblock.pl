@@ -32,15 +32,35 @@ ensureBlackCells(Board):-
 twoBlackCells(List):-
     count(0, List, #=, 2).
 
-% Ensures that all elements in a line/column are different (except black cells)
+% Ensures that all elements in a line/column are different (black cells are ignored)
 ensureAllDistinct(Board):-
     maplist(allDistinct, Board),
     transpose(Board, TransposedBoard),
     maplist(allDistinct, TransposedBoard).
 
 allDistinct(List):-
-    delete(Line, 0, NewList),
-    all_distinct(NewList).
+    deleteZeros(List, NList), %delete/3 wasn't working (apparently deprecated call)
+    all_distinct(NList).
+
+deleteZeros(List, NList):-
+    deleteZerosAux(List, [], NList).
+
+deleteZerosAux([], NList, NList).
+deleteZerosAux([Head | Tail], AccNList, NList):-
+    Head #\= 0, !,
+    append(AccNList, [Head], NewAccNList),
+    deleteZerosAux(Tail, NewAccNList, NList).
+deleteZerosAux([Head | Tail], AccNList, NList):-
+    deleteZerosAux(Tail, AccNList, NList).
+
+%allDistinctAux([], _).
+%allDistinctAux([Head | Tail], HeadValues):-
+%    Head #= 0, !,
+%    allDistinctAux(Tail, HeadValues).
+%allDistinctAux([Head | Tail], HeadValues):-
+%    \+ (member(Head, HeadValues)),
+%    append(HeadValues, [Head], NewHeadValues),
+%    allDistinctAux(Tail, NewHeadValues).
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
