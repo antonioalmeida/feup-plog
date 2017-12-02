@@ -1,20 +1,13 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
 
-:- dynamic pairlist/1.
-
-solveInstance(N, ColumnSums, LineSums):-
+solveInstance(N, ColumnsSum, LinesSum):-
     N > 2,
     getInitialBoard(N, Board),
-    write('Board generated:'),nl,
-    write(Board), nl,
 
-    ensureDomain(N, Board), !,
-    write('Domain ensured'), nl,
-    write(Board), nl,
-
-    ensureAllDistinct(N, Board),
-    ensureSums(Board, ColumnSums, LineSums),
+    ensureDomain(N, Board),
+    ensureBlackCells(Board),
+    ensureAllDistinct(Board),
 
     append(Board, Flattened),
     labeling([], Flattened),
@@ -22,7 +15,7 @@ solveInstance(N, ColumnSums, LineSums):-
 
 % Ensures the domain of the variables used
 ensureDomain(N, Board):-
-    LimitN #= N-2,
+    LimitN is N-2,
     ensureDomainLine(LimitN, Board).
 
 ensureDomainLine(_, []).
@@ -30,64 +23,44 @@ ensureDomainLine(Limit, [Line | Remaining]):-
     domain(Line, 0, Limit),
     ensureDomainLine(Limit, Remaining).
 
-% Ensures that all elements in a line/column are different (except black cells which there are always 2 of)
-ensureAllDistinct(N, Board):-
-    N2 #= N-2,
-    getPairList(N2, PairList), !,
-    assert(pairlist(PairList)),
+% Ensures that in a line/column there are exactly two black cells
+ensureBlackCells(Board):-
+    maplist(twoBlackCells, Board),
+    transpose(Board, TransposedBoard),
+    maplist(twoBlackCells, TransposedBoard).
+
+twoBlackCells(List):-
+    count(0, List, #=, 2).
+
+% Ensures that all elements in a line/column are different (black cells are ignored)
+ensureAllDistinct(Board):-
     maplist(allDistinct, Board),
     transpose(Board, TransposedBoard),
     maplist(allDistinct, TransposedBoard).
 
-getPairList(N, PairList):-
-    getPairListAux(N, [0-2], PairList).
-
-getPairListAux(0, PairList, PairList).
-getPairListAux(N, AccPairList, PairList):-
-    N1 #= N-1,
-    append(AccPairList, [N-1], NewAccPairList),
-    getPairListAux(N1, NewAccPairList, PairList).
-
 allDistinct(List):-
-    pairlist(PairList),
-    global_cardinality(List, PairList).
+    deleteZeros(List, NList), %delete/3 wasn't working (apparently deprecated call)
+    all_distinct(NList).
 
-% Ensures that the sum of the elements between two black cells in a line/columnn is a specified value
-ensureSums(Board, ColumnSums, LineSums):-
-    write('Ensure sums initiating, board is:'), nl,
-    write(Board), nl,
-    ensureLineSums(Board, LineSums),
-    write('Lines done'), nl,
-    transpose(Board, TransposedBoard),
-    ensureLineSums(TransposedBoard, ColumnSums),
-    write('Columns done'), nl, !.
+deleteZeros(List, NList):-
+    deleteZerosAux(List, [], NList).
 
-ensureLineSums([], []).
-ensureLineSums([CurrLine | RemLines], [CurrSum | RemSums]):-
-    write('Processing line '), write(CurrLine), write(', sum has to be '), write(CurrSum), nl,
-    element(BlackCell1, CurrLine, 0),
-    element(BlackCell2, CurrLine, 0),
-    BlackCell1 #< BlackCell2,
-    sumBetween(CurrLine, BlackCell1, BlackCell2, 0, CurrSum),
-    ensureLineSums(RemLines, RemSums),
-    write('Sum check'), nl.
+deleteZerosAux([], NList, NList).
+deleteZerosAux([Head | Tail], AccNList, NList):-
+    Head #\= 0, !,
+    append(AccNList, [Head], NewAccNList),
+    deleteZerosAux(Tail, NewAccNList, NList).
+deleteZerosAux([Head | Tail], AccNList, NList):-
+    deleteZerosAux(Tail, AccNList, NList).
 
-sumBetween(List, End, End, Sum, Sum).
-sumBetween(List, Start, End, AccSum, Sum):-
-    NewStart #= Start + 1,
-    element(Start, List, Elem),
-    NewAcc #= AccSum + Elem,
-    sumBetween(List, NewStart, End, NewAcc, Sum).
-
-extractSubList(Line, Start, End, Sublist):-
-    extractSubListAux(Line, Start, End, [], Sublist).
-
-extractSubListAux(List, End, End, Sublist, Sublist).
-extractSubListAux(List, Start, End, AccSublist, Sublist):-
-    element(Start, List, Current),
-    append(AccSublist, [Current], NewAccSublist),
-    NewStart #= Start + 1,
-    extractSubListAux(List, NewStart, End, NewAccSublist, Sublist).
+%allDistinctAux([], _).
+%allDistinctAux([Head | Tail], HeadValues):-
+%    Head #= 0, !,
+%    allDistinctAux(Tail, HeadValues).
+%allDistinctAux([Head | Tail], HeadValues):-
+%    \+ (member(Head, HeadValues)),
+%    append(HeadValues, [Head], NewHeadValues),
+%    allDistinctAux(Tail, NewHeadValues).
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
@@ -95,7 +68,7 @@ getInitialBoard(N, Board):-
 
 getInitialBoardAux(0, _, Board, Board).
 getInitialBoardAux(N, Size, AccBoard, Board):-
-    N1 #= N-1,
+    N1 is N-1,
     length(NewLine, Size),
     append(AccBoard, [NewLine], NewAccBoard),
     getInitialBoardAux(N1, Size, NewAccBoard, Board).
