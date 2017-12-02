@@ -37,7 +37,7 @@ ensureDomain(Limit, [Line | Remaining]):-
 %twoBlackCells(List):-
 %    count(0, List, #=, 2).
 
-% Ensures that all elements in a line/column are different (black cells are ignored)
+% Ensures that all elements in a line/column are different (except black cells, which there are 2 of)
 ensureAllDistinct(Limit, Board):-
     getValueAmountPairList(Limit, PairList),
     write(PairList), nl,
@@ -45,11 +45,11 @@ ensureAllDistinct(Limit, Board):-
     transpose(Board, TransposedBoard),
     maplist(allDistinct(PairList), TransposedBoard).
 
-getValueAmountPairList(0, [0-2]).
+getValueAmountPairList(0, [0-2]). % Each value comes up once, except for 0 (black cell)
 getValueAmountPairList(N, PairList):-
     N1 is N-1,
     getValueAmountPairList(N1, PairListTemp),
-    append(PairListTemp, [N-1], PairList).
+    append(PairListTemp, [N-1], PairList). %Value should show up exactly once
 
 allDistinct(PairList, Line):-
     global_cardinality(Line, PairList).
