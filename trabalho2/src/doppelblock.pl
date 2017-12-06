@@ -1,7 +1,7 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
 
-solveInstance(N, ColumnsSum, LinesSum):-
+solveInstance(N, ColumnsSum, LinesSum, Board):-
     N > 2,
 
     % Numbers can only go up to N-2
@@ -18,6 +18,8 @@ solveInstance(N, ColumnsSum, LinesSum):-
 
     % Ensure that numbers in each row/column are distinct
     ensureAllDistinct(Limit, Board),
+
+    ensureSums(Board, ColumnsSum, LinesSum),
 
     append(Board, Flattened),
     labeling([], Flattened),
@@ -52,7 +54,7 @@ getValueAmountPairList(N, PairList):-
     append(PairListTemp, [N-1], PairList). %Value should show up exactly once
 
 allDistinct(PairList, Line):-
-    global_cardinality(Line, PairList).
+    global_cardinality(Line, PairList). 
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
@@ -64,3 +66,17 @@ getInitialBoardAux(N, Size, AccBoard, Board):-
     length(NewLine, Size),
     append(AccBoard, [NewLine], NewAccBoard),
     getInitialBoardAux(N1, Size, NewAccBoard, Board).
+
+ensureSums(Board, ValuesRows, ValuesCols):-
+   maplist(ensureSumsAux(5),Board),
+   transpose(Board, TransposedBoard),
+   maplist(ensureSumsAux(5),TransposedBoard).
+
+ensureSumsAux(Value, Line):-
+    getSubList(Line, SubList),
+    sum(SubList, #=, Value).
+
+getSubList(List, Sub):-
+    Element #= 0,
+    subseq1(List, [Element|Sub]),
+    last(Sub, Element).
