@@ -7,7 +7,6 @@
 :-include('main.pl').
 :-include('emojis.pl').
 
-:-dynamic difficulty/1.
 :-dynamic connected/2.
 
 % case where game is finished
@@ -109,13 +108,14 @@ initMultiplayerGame( Game ):-
 	% 8 - boolean, true if black player needs to play queen %
 	% 9 - boolean, true if game is over %
 	% 10 - atom, sets game type - singlePlayer or multiPlayer %
+	% 11 - atom, difficulty - easy, medium or hard - only in single player mode
 	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false, false, multiPlayer ].
 
-initSingleplayerGame( Game, AIPlayer ):-
+initSingleplayerGame( Game, AIPlayer, Difficulty ):-
 	initialBoard( Board ),
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
-	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false, false, singlePlayer ].
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false, false, singlePlayer, Difficulty ].
 
 initNoPlayerGame( Game ):-
 	initialBoard( Board ),
@@ -190,8 +190,11 @@ getGameType( Game, Type ):-
 getAIPlayer( Game, AIPlayer ):-
 	elementAt(5, Game, AIPlayer ).
 
+getDifficulty( Game, Difficulty ):-
+	elementAt(11, Game, Difficulty).
+
 checkGameOver( Game, NewGame ):-
-	getTurnIndex(Game, 15),
+	getTurnIndex(Game, 16),
 	setGameOver(Game, NewGame).
 checkGameOver(Game,Game).
 

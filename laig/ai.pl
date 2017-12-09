@@ -24,17 +24,17 @@ getAllMoves( Game, Player, MovesList ):-
 
  % Easy AI
  getAIMove( Game, Player, Piece, X, Y ):-
- 	difficulty( easy ),
+ 	getDifficulty(Game, easy),
  	easyGetMove( Game, Player, Piece, X, Y ).
 
  % Medium AI
  getAIMove( Game, Player, Piece, X, Y ):-
- 	difficulty( medium ),
+ 	getDifficulty(Game, medium),
  	getBestMove( Game, Player, Piece, X, Y ).
 
  % Hard AI
  getAIMove( Game, Player, Piece, X, Y ):-
- 	difficulty( hard ),
+ 	getDifficulty(Game, hard),
  	hardGetMove( Game, Player, Piece, X, Y ).
 
  % AI vs AI first turn
