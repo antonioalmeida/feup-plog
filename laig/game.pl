@@ -7,7 +7,6 @@
 :-include('main.pl').
 :-include('emojis.pl').
 
-:-dynamic typeOfGame/1.
 :-dynamic difficulty/1.
 :-dynamic connected/2.
 
@@ -26,10 +25,8 @@ playGame( Game ):-
 	displayScore( WhiteScore, BlackScore ),
 	displayWinner( WhiteScore, BlackScore ),
 
-	retractall(gameOver(_)),
 	retractall(difficulty(_)),
 	retractall(connected(_,_)),
-	retractall(typeOfGame(_)),
 
 	write('Press ENTER to continue.'), nl,
 	read_line(_),
@@ -66,7 +63,7 @@ playGame( Game ):-
 
 % Single Player AI's turn
 getNextMove( Game, Player, Piece, X, Y ):-
-	typeOfGame( singlePlayer ),
+	getGameType( Game, singlePlayer ),
 	getAIPlayer( Game, AIPlayer ),
 	AIPlayer == Player,
 	write('AI is thinking...'), nl,
@@ -74,17 +71,17 @@ getNextMove( Game, Player, Piece, X, Y ):-
 
 % Single Player user's turn
 getNextMove( Game, Player, Piece, X, Y ):-
-	typeOfGame( singlePlayer ),
+	getGameType( Game, singlePlayer ),
 	readMoveFromUser( Player, Piece, X, Y ).
 
 %  Multiplayer regular turn
 getNextMove( Game, Player, Piece, X, Y ):-
-	typeOfGame( multiPlayer ),
+	getGameType( Game, multiPlayer ),
 	readMoveFromUser( Player, Piece, X, Y ).
 
 % AI vs AI regular turn
 getNextMove( Game, Player, Piece, X, Y ):-
-	typeOfGame( noPlayer ),
+	getGameType( Game, noPlayer ),
 	write('AI is thinking...'), nl,
 	getAIMove( Game, Player, Piece, X, Y ),
 	write('The AI has decided!'), nl,
@@ -119,6 +116,13 @@ initSingleplayerGame( Game, AIPlayer ):-
 	initialBoard( AttackedBoardWhite ),
 	initialBoard( AttackedBoardBlack ),
 	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false, false, singlePlayer ].
+
+initNoPlayerGame( Game ):-
+	initialBoard( Board ),
+	initialBoard( AttackedBoardWhite ),
+	initialBoard( AttackedBoardBlack ),
+
+	Game = [ Board, white, 0, AttackedBoardWhite, AttackedBoardBlack, AIPlayer, [], false, false, false, noPlayer ].
 
 getBoard( Game, Board ):-
 	elementAt(0, Game, Board).
@@ -179,6 +183,9 @@ needsToPlayQueen( Game, white ):-
 needsToPlayQueen( Game, black ):-
 	elementAt( 8, Game, Value ),
 	Value == true.
+
+getGameType( Game, Type ):-
+	elementAt( 10, Game, Type ).
 
 getAIPlayer( Game, AIPlayer ):-
 	elementAt(5, Game, AIPlayer ).

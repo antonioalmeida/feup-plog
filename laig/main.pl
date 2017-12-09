@@ -74,14 +74,11 @@ startAndPlayGame( _, _ ):-
 	start.
 
 startGame( singlePlayer, Difficulty, PlayerColor, Game ):-
-	asserta(typeOfGame(singlePlayer)),
 	asserta(difficulty(Difficulty)),
 	initSingleplayerGame( Game, PlayerColor ).
 
 startGame( multiPlayer, Game ):-
-	asserta(typeOfGame(multiPlayer)),
 	initMultiplayerGame( Game ).
 
 startGame( noPlayer, Game ):-
-	asserta(typeOfGame(noPlayer)),
-	initMultiplayerGame( Game ).
+	initNoPlayerGame( Game ).

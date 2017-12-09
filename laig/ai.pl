@@ -39,13 +39,13 @@ getAllMoves( Game, Player, MovesList ):-
 
  % AI vs AI first turn
  getAIMove( Game, Player, Piece, X, Y ):-
- 	typeOfGame( noPlayer ),
+ 	getGameType(Game, noPlayer),
  	getTurnIndex( Game, 0 ),
  	easyGetMove( Game, Player, Piece, X, Y ).
 
   % AI vs AI regular turn
  getAIMove( Game, Player, Piece, X, Y ):-
- 	typeOfGame( noPlayer ),
+ 	getGameType(Game, noPlayer),
  	getBestMove( Game, Player, Piece, X, Y ).
 
 easyGetMove( Game, Player, Piece, X, Y ):-
