@@ -51,8 +51,6 @@ playGame( Game ):-
 	% prepare for next turn
 	setBoard( GameTemp, NextBoard, GameTemp2 ),
 	updateAttackedBoard( GameTemp2, GameTemp3 ),
-	getAttackedBoard( GameTemp3, Player, Cenas ),
-	write(Cenas),
 	incTurnIndex( GameTemp3, GameTemp4 ),
 	switchPlayer( GameTemp4, GameTemp5 ),
 	checkGameOver( GameTemp5, NewGame ),
@@ -204,11 +202,11 @@ getDifficulty( Game, Difficulty ):-
 
 checkGameOver( Game, NewGame ):-
 	getTurnIndex(Game, 16),
-	setGameOver(Game, NewGame).
+	setGameOver(Game, true, NewGame).
 checkGameOver(Game,Game).
 
-setGameOver( Game, NewGame ):-
-	replace( Game, 9, true, NewGame ).
+setGameOver( Game, Value, NewGame ):-
+	replace( Game, 9, Value, NewGame ).
 
 gameOver( Game ):-
 	elementAt(9, Game, true).
@@ -234,10 +232,39 @@ updateMadeMoves( Game, Player, Piece, X, Y, NewGame ):-
 updateMadeMoves( Game, Player, Piece, X, Y, NewGame ):-
 	addPlayedPiece( Game, Player, Piece, X, Y, NewGame ).
 
+%%%%%%%%%%%%%%%
+%% undo move %%
+%%%%%%%%%%%%%%%
+
+% case where game is over 
+undoMove(Game, NewGame):-
+	gameOver(Game),
+	setGameOver(Game, false, TempGame),
+	getLastPlayedPiece(TempGame, Player, Piece, X, Y),
+	removeLastPlayedPiece(TempGame, TempGame2),
+	removeMove(TempGame2, X, Y, NewGame).
+
+% case where current player needs to play queen
+undoMove(Game, NewGame):-
+	getCurrentPlayer(Game, Player),
+	needsToPlayQueen(Game, Player),
+	setNeedsToPlayQueen(Game, Player, false, TempGame),
+	getLastPlayedPiece(TempGame, Player, Piece, X, Y),
+	removeLastPlayedPiece(TempGame, TempGame2),
+	removeMove(TempGame2, X, Y, NewGame).
+
+% regular case undo
 undoMove(Game, NewGame):-
 	getLastPlayedPiece(Game, Player, Piece, X, Y),
 	removeLastPlayedPiece(Game, TempGame),
-	makeMove(TempGame, 0, X, Y, NewGame).
+	removeMove(TempGame, X, Y, NewGame).
+
+% remove move from board
+removeMove(Game, X, Y, NewGame):-
+	getBoard(Game, Board),
+	makeMove(Board, 0, X, Y, NewBoard),
+	setBoard(Game, NewBoard, TempGame),
+	updateAttackedBoard(TempGame, NewGame).
 
 switchPlayer( Game, NewGame ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
