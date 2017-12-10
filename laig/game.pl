@@ -46,7 +46,7 @@ playGame( Game ):-
 
 	% make and update moves
 	makeMove( Board, Piece, X, Y, NextBoard ),
-	updateMadeMoves( Game, Player, Piece, GameTemp ),
+	updateMadeMoves( Game, Player, Piece, X, Y, GameTemp ),
 
 	% prepare for next turn
 	setBoard( GameTemp, NextBoard, GameTemp2 ),
@@ -156,19 +156,28 @@ incTurnIndex( Game, NewGame ):-
 getPlayedPieces( Game, PlayedPieces ):-
 	elementAt( 6, Game, PlayedPieces ).
 
-addPlayedPiece( Game, Player, Piece, NewGame ):-
+addPlayedPiece( Game, Player, Piece, X, Y, NewGame ):-
 	getPlayedPieces( Game, PlayedPieces ),
-	append( [Player-Piece], PlayedPieces, NewPlayedPieces ),
+	append( [Player-Piece-X-Y], PlayedPieces, NewPlayedPieces ),
 	replace( Game, 6, NewPlayedPieces, NewGame ).
+
+getLastPlayedPiece(Game, Player, Piece, X, Y):-
+	% last piece played is at the head of list %
+	getPlayedPieces(Game, [Player-Piece-X-Y|_]).
+
+removeLastPlayedPiece(Game, NewGame):-
+	getPlayedPieces(Game, [_|PlayedPieces]),
+	replace(Game, 6, PlayedPieces, NewGame).
 
 piecePlayed( Game, Player, Piece ):-
 	getPlayedPieces( Game, PlayedPieces ),
-	member( Player-Piece, PlayedPieces ).
+	member( Player-Piece-_-_, PlayedPieces ).
 
 piecePlayedTwice( Game, Player, Piece ):-
 	getPlayedPieces( Game, PlayedPieces ),
-	countOccurences( PlayedPieces, Played-Piece, N ),
-	N == 2.
+	member(Player-Piece-X1-Y1, PlayedPieces),
+	member(Player-Piece-X2-Y2, PlayedPieces),
+	(X1 \= X2 ; Y1 \= Y2).
 
 setNeedsToPlayQueen( Game, white, Value, NewGame ):-
 	replace( Game, 7, Value, NewGame ).
@@ -205,25 +214,30 @@ gameOver( Game ):-
 	elementAt(9, Game, true).
 	
 % case where player had to play queen and does so
-updateMadeMoves( Game, Player, Piece, NewGame ):-
+updateMadeMoves( Game, Player, Piece, X, Y, NewGame ):-
 	isQueen( Piece, Player ),	
 	needsToPlayQueen( Game, Player ),
 	setNeedsToPlayQueen( Game, Player, false, TempGame ),
 	otherPlayer( Player, Other ),
 	setNeedsToPlayQueen( TempGame, Other , false, TempGame2 ),
-	addPlayedPiece( TempGame2, Player, Piece, NewGame ).
+	addPlayedPiece( TempGame2, Player, Piece, X, Y, NewGame ).
 
 % case where a player plays queen for the first time
-updateMadeMoves( Game, Player, Piece, NewGame ):-
+updateMadeMoves( Game, Player, Piece, X, Y, NewGame ):-
 	isQueen( Piece, Player ),
 	otherPlayer( Player, Other ),
 	\+needsToPlayQueen( Game, Other ),
 	setNeedsToPlayQueen( Game, Other, true, TempGame ),
-	addPlayedPiece( TempGame, Player, Piece, NewGame ).
+	addPlayedPiece( TempGame, Player, Piece, X, Y, NewGame ).
 
 % regular case
-updateMadeMoves( Game, Player, Piece, NewGame ):-
-	addPlayedPiece( Game, Player, Piece, NewGame ).
+updateMadeMoves( Game, Player, Piece, X, Y, NewGame ):-
+	addPlayedPiece( Game, Player, Piece, X, Y, NewGame ).
+
+undoMove(Game, NewGame):-
+	getLastPlayedPiece(Game, Player, Piece, X, Y),
+	removeLastPlayedPiece(Game, TempGame),
+	makeMove(TempGame, 0, X, Y, NewGame).
 
 switchPlayer( Game, NewGame ):-
 	getCurrentPlayer( Game, CurrentPlayer ),
