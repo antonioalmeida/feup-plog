@@ -80,6 +80,8 @@ getTransitions(N, AuxList, TransitionList, Counter):-
     getTransitions(N1, NewAuxList, TransitionList, Counter).
 
 ensureSums(_, [], []).
+ensureSums(Limit, [_Line | RemL], [-1 | RemS]):-
+    ensureSums(Limit, RemL, RemS).
 ensureSums(Limit, [Line | RemL], [Sum | RemS]):-
     getTransitions(Limit, [], TransitionList, C),
     automaton(Line, _, Line, [source(q0), sink(q2)], TransitionList, [C], [0], [Sum]),
