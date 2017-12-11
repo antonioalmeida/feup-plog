@@ -1,7 +1,7 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
 
-solveInstance(N, ColumnsSum, LinesSum, Board):-
+solveInstance(N, LineSums, ColumnSums):-
     N > 2,
 
     % Numbers can only go up to N-2
@@ -13,48 +13,18 @@ solveInstance(N, ColumnsSum, LinesSum, Board):-
     % Ensure every value on the board is in range [0,N-2] (0 = black cell)
     ensureDomain(Limit, Board),
 
-    % Ensure that in every row/column there are exactly two black cells
-    %ensureBlackCells(Board),
-
     % Ensure that numbers in each row/column are distinct
+    % Also ensures exactly two black cells per row/column
     ensureAllDistinct(Limit, Board),
 
-    ensureSums(Board, ColumnsSum, LinesSum),
+    % Ensures sum between black cells in each line is specified value (if specified)
+    ensureSums(Limit, Board, LineSums),
+    transpose(Board, Transposed),
+    ensureSums(Limit, Transposed, ColumnSums),
 
     append(Board, Flattened),
     labeling([], Flattened),
-    write(Board).
-
-% Ensures the domain of the variables used
-ensureDomain(_, []).
-ensureDomain(Limit, [Line | Remaining]):-
-    domain(Line, 0, Limit),
-    ensureDomain(Limit, Remaining).
-
-% Ensures that in a line/column there are exactly two black cells
-%ensureBlackCells(Board):-
-%    maplist(twoBlackCells, Board),
-%    transpose(Board, TransposedBoard),
-%    maplist(twoBlackCells, TransposedBoard).
-%twoBlackCells(List):-
-%    count(0, List, #=, 2).
-
-% Ensures that all elements in a line/column are different (except black cells, which there are 2 of)
-ensureAllDistinct(Limit, Board):-
-    getValueAmountPairList(Limit, PairList),
-    write(PairList), nl,
-    maplist(allDistinct(PairList), Board),
-    transpose(Board, TransposedBoard),
-    maplist(allDistinct(PairList), TransposedBoard).
-
-getValueAmountPairList(0, [0-2]). % Each value comes up once, except for 0 (black cell)
-getValueAmountPairList(N, PairList):-
-    N1 is N-1,
-    getValueAmountPairList(N1, PairListTemp),
-    append(PairListTemp, [N-1], PairList). %Value should show up exactly once
-
-allDistinct(PairList, Line):-
-    global_cardinality(Line, PairList). 
+    write(Board), nl.
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
@@ -62,21 +32,45 @@ getInitialBoard(N, Board):-
 
 getInitialBoardAux(0, _, Board, Board).
 getInitialBoardAux(N, Size, AccBoard, Board):-
+    N > 0,
     N1 is N-1,
     length(NewLine, Size),
     append(AccBoard, [NewLine], NewAccBoard),
     getInitialBoardAux(N1, Size, NewAccBoard, Board).
 
-ensureSums(Board, ValuesRows, ValuesCols):-
-   maplist(ensureSumsAux(5),Board),
-   transpose(Board, TransposedBoard),
-   maplist(ensureSumsAux(5),TransposedBoard).
+% Ensures the domain of the variables used
+ensureDomain(_, []).
+ensureDomain(Limit, [Line | Remaining]):-
+    domain(Line, 0, Limit),
+    ensureDomain(Limit, Remaining).
 
-ensureSumsAux(Value, Line):-
-    getSubList(Line, SubList),
-    sum(SubList, #=, Value).
+% Ensures that all elements in a line/column are different (except black cells, which there are 2 of)
+ensureAllDistinct(Limit, Board):-
+    getValueAmountPairList(Limit, PairList),
+    maplist(allDistinct(PairList), Board),
+    transpose(Board, TransposedBoard),
+    maplist(allDistinct(PairList), TransposedBoard).
 
-getSubList(List, Sub):-
-    Element #= 0,
-    subseq1(List, [Element|Sub]),
-    last(Sub, Element).
+getValueAmountPairList(0, [0-2]). % Each value comes up once, except for 0 (black cell)
+getValueAmountPairList(N, PairList):-
+    N > 0,
+    N1 is N-1,
+    getValueAmountPairList(N1, PairListTemp),
+    append(PairListTemp, [N-1], PairList). %Value should show up exactly once
+
+allDistinct(PairList, Line):-
+    global_cardinality(Line, PairList).
+
+getTransitions(0, AuxList, TransitionList, _):-
+    append(AuxList, [arc(q0,0,q1), arc(q1,0,q2)], TransitionList).
+getTransitions(N, AuxList, TransitionList, Counter):-
+    N > 0,
+    append(AuxList, [arc(q0,N,q0), arc(q1,N,q1,[Counter+N]), arc(q2,N,q2)], NewAuxList),
+    N1 is N-1,
+    getTransitions(N1, NewAuxList, TransitionList, Counter).
+
+ensureSums(_, [], []).
+ensureSums(Limit, [Line | RemL], [Sum | RemS]):-
+    getTransitions(Limit, [], TransitionList, C),
+    automaton(Line, _, Line, [source(q0), sink(q2)], TransitionList, [C], [0], [Sum]),
+    ensureSums(Limit, RemL, RemS).
