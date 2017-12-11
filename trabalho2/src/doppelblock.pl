@@ -1,5 +1,6 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
+:- include('board.pl').
 
 solveInstance(N, LineSums, ColumnSums):-
     N > 2,
@@ -26,15 +27,15 @@ solveInstance(N, LineSums, ColumnSums):-
     reset_timer,
     labeling([], Flattened),
     print_time,
-    fd_statistics,
-    write(Board), nl.
+    fd_statistics, 
+    !,
+    displayBoard(Board, N, LineSums, ColumnSums), nl.
 
-reset_timer :- statistics(walltime,_).
-print_time :-
+reset_timer:- statistics(walltime,_).
+print_time:-
 	statistics(walltime,[_,T]),
 	TS is ((T//10)*10)/1000,
-	nl, write('Time: '), write(TS), write('s'), nl, nl.
-
+	nl, write('Time: '), write(TS), write('s'), nl.
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
