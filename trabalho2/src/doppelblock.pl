@@ -23,8 +23,18 @@ solveInstance(N, LineSums, ColumnSums):-
     ensureSums(Limit, Transposed, ColumnSums),
 
     append(Board, Flattened),
+    reset_timer,
     labeling([], Flattened),
+    print_time,
+    fd_statistics,
     write(Board), nl.
+
+reset_timer :- statistics(walltime,_).
+print_time :-
+	statistics(walltime,[_,T]),
+	TS is ((T//10)*10)/1000,
+	nl, write('Time: '), write(TS), write('s'), nl, nl.
+
 
 % Generate an empty NxN matrix represented by a list of lists
 getInitialBoard(N, Board):-
