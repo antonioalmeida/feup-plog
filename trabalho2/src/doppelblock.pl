@@ -19,9 +19,9 @@ solveInstance(N, LineSums, ColumnSums):-
     ensureAllDistinct(Limit, Board),
 
     % Ensures sum between black cells in each line is specified value (if specified)
-    ensureSums(Limit, Board, LineSums),
+    maplist(ensureSums(Limit), Board, LineSums),
     transpose(Board, Transposed),
-    ensureSums(Limit, Transposed, ColumnSums),
+    maplist(ensureSums(Limit), Transposed, ColumnSums),
 
     append(Board, Flattened),
     reset_timer,
@@ -30,6 +30,36 @@ solveInstance(N, LineSums, ColumnSums):-
     fd_statistics, 
     !,
     displayBoard(Board, N, LineSums, ColumnSums), nl.
+
+generateInstance(N, LineSums, ColumnSums):-
+    N > 2,
+
+    % Numbers can only go up to N-2
+    Limit is N-2,
+
+    % Get an empty NxN board
+    getInitialBoard(N, Board),
+
+    % Ensure every value on the board is in range [0,N-2] (0 = black cell)
+    ensureDomain(Limit, Board),
+
+    % Ensure that numbers in each row/column are distinct
+    % Also ensures exactly two black cells per row/column
+    ensureAllDistinct(Limit, Board),
+
+    ensureNoAdjacentBlackCells(Limit, Board),
+
+    append(Board, Flattened),
+    reset_timer,
+    labeling([], Flattened),
+    print_time,
+    fd_statistics, 
+
+    calculateSums(Board, LineSums),
+    transpose(Board, TransposedBoard),
+    calculateSums(TransposedBoard, ColumnSums).
+
+    %displayBoard(Board, N, LineSums, ColumnSums), nl.
 
 reset_timer:- statistics(walltime,_).
 print_time:-
@@ -80,10 +110,68 @@ getTransitions(N, AuxList, TransitionList, Counter):-
     N1 is N-1,
     getTransitions(N1, NewAuxList, TransitionList, Counter).
 
-ensureSums(_, [], []).
-ensureSums(Limit, [_Line | RemL], [-1 | RemS]):-
-    ensureSums(Limit, RemL, RemS).
-ensureSums(Limit, [Line | RemL], [Sum | RemS]):-
+ensureSums(Limit, _, -1).
+ensureSums(Limit, Line, Sum):-
     getTransitions(Limit, [], TransitionList, C),
-    automaton(Line, _, Line, [source(q0), sink(q2)], TransitionList, [C], [0], [Sum]),
-    ensureSums(Limit, RemL, RemS).
+    automaton(Line, _, Line, [source(q0), sink(q2)], TransitionList, [C], [0], [Sum]).
+
+getMaxNTransitions(Limit, Source, Dest, TransitionList):-
+    write('Ola: '), write(Limit), nl,
+    getMaxNTransitionsAux(Limit, 1, Source, Dest, [], TransitionList).
+
+getMaxNTransitionsAux(Limit, Limit, Source, Dest, AuxList, TransitionList):-
+    append([arc(Source, Limit, Dest)], AuxList, TransitionList).
+
+getMaxNTransitionsAux(Limit, N, Source, Dest, AuxList, TransitionList):-  
+    append([arc(Source, N, Dest)], AuxList, NewAuxList),
+    N1 is N+1,
+    write(N1), nl,
+    getMaxNTransitionsAux(Limit, N1, Source, Dest, NewAuxList, TransitionList).
+
+ensureNoAdjacentBlackCells(N, Board):-
+    getMaxNTransitions(N, q0, q0, Q0Transitions),
+    getMaxNTransitions(N, q1, q2, Q1Transitions),
+    getMaxNTransitions(N, q2, q2, Q2Transitions),
+    getMaxNTransitions(N, q3, q3, Q3Transitions),
+    append(Q0Transitions, Q1Transitions, TempTransitions),
+    append(Q2Transitions, Q3Transitions, TempTransitions2),
+    append(TempTransitions, TempTransitions2, DynamicTransitions),
+    append([arc(q0, 0, q1), arc(q2, 0, q3) ], DynamicTransitions, TransitionList),
+
+    maplist(ensureNoAdjacentBlackCellsLine(N, TransitionList), Board),
+    transpose(Board, TransposedBoard),
+    maplist(ensureNoAdjacentBlackCellsLine(N, TransitionList), TransposedBoard).
+
+ensureNoAdjacentBlackCellsLine(N, TransitionList, Line):-
+    automaton(Line, [source(q0), sink(q3)], TransitionList).
+
+calculateSums(Board, Sums):-
+    calculateSumsAux(Board, [], Temp),
+    reverse(Temp, Sums).
+
+calculateSumsAux([], Sums, Sums).
+calculateSumsAux([Line|RestBoard], Aux, Sums):-
+    calculateSumsLine(Line, LineSum),
+    append([LineSum], Aux, NextAux),
+    calculateSumsAux(RestBoard, NextAux, Sums).
+
+calculateSumsLine([0|Rest], Sum):-
+    calculateSumsLineAux(Rest, 0, Sum).
+calculateSumsLine([Val|Rest], Sum):-
+    calculateSumsLine(Rest, Sum).
+
+calculateSumsLineAux([0|Rest], Sum, Sum).
+calculateSumsLineAux([Val|Rest], Aux, Sum):-
+    NextAux is Aux+Val,
+    calculateSumsLineAux(Rest, NextAux, Sum).
+
+
+
+
+
+
+
+
+
+
+

@@ -1,13 +1,13 @@
 :- use_module(library(system)).
 
-getDisplay(0, ' '). % black space
+getDisplay(0, '#'). % black space
 getDisplay(A,A). % other digits
 
 displayBoard(Board, N, LineSums, ColumnSums):-
 	nl,
 	write('   '),
-	displayBoardHeader(LineSums),
-	displayBoardTail(Board, N, ColumnSums),
+	displayBoardHeader(ColumnSums),
+	displayBoardTail(Board, N, LineSums),
 	write('  '),
 	displaySeparator(N).
 
@@ -22,7 +22,8 @@ displayBoardTail([Line | RestLines], N, [Sum | RestSums]):-
 displayLine([], Sum):- write('| - '), write(Sum).
 displayLine([Value | T], Sum):-
 	write('| '),
-	write(Value),
+	getDisplay(Value, Display),
+	write(Display),
 	write(' '),
 	displayLine(T, Sum).
 
