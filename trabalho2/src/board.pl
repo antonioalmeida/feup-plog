@@ -34,6 +34,7 @@ displayBoardHeader([H|T]):-
 
 displaySeparator(0):- nl.
 displaySeparator(N):-
+	N > 0,
 	write('----'),
 	N1 is N-1,
 	displaySeparator(N1).

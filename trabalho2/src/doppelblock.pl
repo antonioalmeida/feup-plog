@@ -2,33 +2,40 @@
 :- use_module(library(clpfd)).
 :- include('board.pl').
 
-solveInstance(N, LineSums, ColumnSums):-
+solveInstance(LineSums, ColumnSums):-
+    %Ensure sums lists are of equal size
+    length(LineSums, N),
+    length(ColumnSums, N),
+
+    % Numbers go from 1 to N-2 so puzzle is not defined for N <= 2
     N > 2,
 
     % Numbers can only go up to N-2
     Limit is N-2,
 
-    % Get an empty NxN board
+    % Get the NxN board domain variables
     getInitialBoard(N, Board),
 
-    % Ensure every value on the board is in range [0,N-2] (0 = black cell)
+    % Ensure domain of every value on the board (is in range [0,N-2], with 0 = black cell)
     ensureDomain(Limit, Board),
 
+    % Restriction 1
     % Ensure that numbers in each row/column are distinct
     % Also ensures exactly two black cells per row/column
     ensureAllDistinct(Limit, Board),
 
-    % Ensures sum between black cells in each line is specified value (if specified)
+    % Restriction 2
+    % Ensures sum between black cells in each line/column is specified value (if specified)
     maplist(ensureSums(Limit), Board, LineSums),
     transpose(Board, Transposed),
     maplist(ensureSums(Limit), Transposed, ColumnSums),
 
     append(Board, Flattened),
     reset_timer,
-    labeling([], Flattened),
+    labeling([bisect, down], Flattened),
+    %labeling([], Flattened),
     print_time,
-    fd_statistics, 
-    !,
+    fd_statistics,
     displayBoard(Board, N, LineSums, ColumnSums), nl.
 
 generateInstance(N, LineSums, ColumnSums):-
@@ -53,7 +60,7 @@ generateInstance(N, LineSums, ColumnSums):-
     reset_timer,
     labeling([], Flattened),
     print_time,
-    fd_statistics, 
+    fd_statistics,
 
     calculateSums(Board, LineSums),
     transpose(Board, TransposedBoard),
@@ -122,7 +129,7 @@ getMaxNTransitions(Limit, Source, Dest, TransitionList):-
 getMaxNTransitionsAux(Limit, Limit, Source, Dest, AuxList, TransitionList):-
     append([arc(Source, Limit, Dest)], AuxList, TransitionList).
 
-getMaxNTransitionsAux(Limit, N, Source, Dest, AuxList, TransitionList):-  
+getMaxNTransitionsAux(Limit, N, Source, Dest, AuxList, TransitionList):-
     append([arc(Source, N, Dest)], AuxList, NewAuxList),
     N1 is N+1,
     write(N1), nl,
@@ -164,14 +171,3 @@ calculateSumsLineAux([0|Rest], Sum, Sum).
 calculateSumsLineAux([Val|Rest], Aux, Sum):-
     NextAux is Aux+Val,
     calculateSumsLineAux(Rest, NextAux, Sum).
-
-
-
-
-
-
-
-
-
-
-
