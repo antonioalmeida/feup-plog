@@ -1,5 +1,8 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
+:- use_module(library(system)).
+:- use_module(library(random)).
+
 :- include('board.pl').
 
 solveInstance(LineSums, ColumnSums):-
@@ -33,7 +36,6 @@ solveInstance(LineSums, ColumnSums):-
     append(Board, Flattened),
     reset_timer,
     labeling([bisect, down], Flattened),
-    %labeling([], Flattened),
     print_time,
     fd_statistics,
     displayBoard(Board, N, LineSums, ColumnSums), nl.
@@ -56,6 +58,14 @@ generateInstance(N, LineSums, ColumnSums):-
 
     ensureNoAdjacentBlackCells(Limit, Board),
 
+    % Force first sum to be a random value so it generates different boards
+    now(Time),
+    setrand(Time),
+    MaxSum is round(Limit*(Limit+1)/2), %round to avoid number being floating point
+    random(0, MaxSum, FirstSum),
+    Board = [H | T],
+    ensureSums(Limit, H, FirstSum),
+
     append(Board, Flattened),
     reset_timer,
     labeling([], Flattened),
@@ -65,8 +75,6 @@ generateInstance(N, LineSums, ColumnSums):-
     calculateSums(Board, LineSums),
     transpose(Board, TransposedBoard),
     calculateSums(TransposedBoard, ColumnSums).
-
-    %displayBoard(Board, N, LineSums, ColumnSums), nl.
 
 reset_timer:- statistics(walltime,_).
 print_time:-
