@@ -21,20 +21,20 @@ displayBoardTail([Line | RestLines], N, [Sum | RestSums]):-
 
 displayLine([], Sum):- write('| - '), write(Sum).
 displayLine([Value | T], Sum):-
-	write('| '),
+	write('|  '),
 	getDisplay(Value, Display),
 	write(Display),
-	write(' '),
+	write('  '),
 	displayLine(T, Sum).
 
 displayBoardHeader([]):- nl.
 displayBoardHeader([H|T]):-
-	write(' '), write(H), write('  '),
+	write(' '), write(H), write('    '),
 	displayBoardHeader(T).
 
 displaySeparator(0):- nl.
 displaySeparator(N):-
 	N > 0,
-	write('----'),
+	write('------'),
 	N1 is N-1,
 	displaySeparator(N1).
