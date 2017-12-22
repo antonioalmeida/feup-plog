@@ -10,7 +10,7 @@ doppelblock:-
 	write('2 - Generate and solve puzzle.'), nl,
 	write('3 - Solve sample puzzle.'), nl,
 	write('4 - Exit.'), nl,
-	get_char( N ),
+	get_char(N),
     get_char(_),
 	clearScreen,
 	runOption( N ).

@@ -59,22 +59,22 @@ generateInstance(N, LineSums, ColumnSums, Difficulty):-
     % Also ensures exactly two black cells per row/column
     ensureAllDistinct(Limit, Board),
 
+    % Ensure that no black cells are adjacent to avoid trivial cases
     ensureNoAdjacentBlackCells(Limit, Board),
+
+    % Force line and column sums to be greater than a number, based on difficulty
+    MaxSum is round(Limit*(Limit+1)/2), %round to avoid number being floating point
+    MaxSumLine is MaxSum*N,
+    getMinSum(Difficulty, MaxSumLine, MinSum),
+    sum(LineSums, #>, MinSum), 
+    sum(ColumnSums, #>, MinSum),    
 
     % Force first sum to be a random value so it generates different boards
     now(Time),
     setrand(Time),
-    MaxSum is round(Limit*(Limit+1)/2), %round to avoid number being floating point
-    random(0, MaxSum, FirstSum),
+    random(1, MaxSum, FirstSum),
     Board = [H | T],
     ensureSums(Limit, H, FirstSum),
-
-    % Force line and column sums to be greater than a number, based on difficulty
-    MaxSumLine is MaxSum*N,
-    getMinSum(Difficulty, MaxSumLine, MinSum),
-    SumL #> MinSum, SumC #> MinSum,
-    sum(LineSums, #=, SumL), 
-    sum(ColumnSums, #=, SumC), 
 
     append(Board, Flattened),
     reset_timer,
@@ -93,6 +93,7 @@ getMinSum(medium, MaxSum, MinSum):-
     MinSum is round(MaxSum/3).
 getMinSum(hard, MaxSum, MinSum):- 
     MinSum is round(MaxSum/2).
+getMinSum(_, MaxSum, 0).
 
 reset_timer:- statistics(walltime,_).
 print_time:-
@@ -149,7 +150,6 @@ ensureSums(Limit, Line, Sum):-
     automaton(Line, _, Line, [source(q0), sink(q2)], TransitionList, [C], [0], [Sum]).
 
 getMaxNTransitions(Limit, Source, Dest, TransitionList):-
-    write('Ola: '), write(Limit), nl,
     getMaxNTransitionsAux(Limit, 1, Source, Dest, [], TransitionList).
 
 getMaxNTransitionsAux(Limit, Limit, Source, Dest, AuxList, TransitionList):-
@@ -158,7 +158,6 @@ getMaxNTransitionsAux(Limit, Limit, Source, Dest, AuxList, TransitionList):-
 getMaxNTransitionsAux(Limit, N, Source, Dest, AuxList, TransitionList):-
     append([arc(Source, N, Dest)], AuxList, NewAuxList),
     N1 is N+1,
-    write(N1), nl,
     getMaxNTransitionsAux(Limit, N1, Source, Dest, NewAuxList, TransitionList).
 
 ensureNoAdjacentBlackCells(N, Board):-
