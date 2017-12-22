@@ -40,11 +40,14 @@ solveInstance(LineSums, ColumnSums):-
     fd_statistics,
     displayBoard(Board, N, LineSums, ColumnSums), nl.
 
-generateInstance(N, LineSums, ColumnSums):-
+generateInstance(N, LineSums, ColumnSums, Difficulty):-
     N > 2,
 
     % Numbers can only go up to N-2
     Limit is N-2,
+
+    length(LineSums, N),
+    length(ColumnSums, N),
 
     % Get an empty NxN board
     getInitialBoard(N, Board),
@@ -66,15 +69,30 @@ generateInstance(N, LineSums, ColumnSums):-
     Board = [H | T],
     ensureSums(Limit, H, FirstSum),
 
+    % Force line and column sums to be greater than a number, based on difficulty
+    MaxSumLine is MaxSum*N,
+    getMinSum(Difficulty, MaxSumLine, MinSum),
+    SumL #> MinSum, SumC #> MinSum,
+    sum(LineSums, #=, SumL), 
+    sum(ColumnSums, #=, SumC), 
+
     append(Board, Flattened),
     reset_timer,
     labeling([], Flattened),
-    print_time,
-    fd_statistics,
 
     calculateSums(Board, LineSums),
     transpose(Board, TransposedBoard),
-    calculateSums(TransposedBoard, ColumnSums).
+    calculateSums(TransposedBoard, ColumnSums),
+
+    print_time,
+    fd_statistics.
+
+getMinSum(easy, MaxSum, MinSum):- 
+    MinSum is round(MaxSum/4).
+getMinSum(medium, MaxSum, MinSum):- 
+    MinSum is round(MaxSum/3).
+getMinSum(hard, MaxSum, MinSum):- 
+    MinSum is round(MaxSum/2).
 
 reset_timer:- statistics(walltime,_).
 print_time:-
