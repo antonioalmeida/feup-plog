@@ -24,9 +24,17 @@ runOption('1'):-
     backtoMainMenu.
 
 runOption('2'):-
+    write('Difficulty of board to generate:'), nl,
+    write('1 - Easy'), nl,
+    write('2 - Medium'), nl,
+    write('3 - Hard'), nl,
+    get_char(DN),
+    get_char(_),
+    clearScreen,
     write('Size of board sums to generate: '),
     read(N),
-    generateInstance(N, LineSums, ColumnSums),
+    getDifficulty(DN, Difficulty),
+    generateInstance(N, LineSums, ColumnSums, Difficulty),
     write('Generated instance:'),nl,
     write('Line sums: '), write(LineSums),nl,
     write('Column sums: '), write(ColumnSums),nl,
@@ -56,6 +64,10 @@ solveSample('2'):-
 
 solveSample('3'):-
     solveInstance([4,5,4,4,8,4,0],[10,4,4,4,5,5,12]).
+
+getDifficulty('1', easy).
+getDifficulty('2', medium).
+getDifficulty('3', hard).
 
 solveSample(_).
 
